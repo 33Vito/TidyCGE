@@ -1,0 +1,61 @@
+img.logo {
+  position: static;
+  bottom: 0px;
+  left: 0px;
+}
+
+/* logo */
+.skin-blue .main-header .logo {
+  background-color: #002776;
+  }
+
+/* logo when hovered */
+.skin-blue .main-header .logo:hover {
+  background-color: #002776;
+  }
+
+/* navbar (rest of the header) */
+.skin-blue .main-header .navbar {
+  background-color: #002776;
+  }
+
+/* main sidebar */
+/*.skin-blue .main-sidebar {
+  background-color: #81BC00;
+  }*/
+
+/* active selected tab in the sidebarmenu */
+/*.skin-blue .main-sidebar .sidebar .sidebar-menu .active a{
+  background-color: #81BC00;
+  }*/
+
+/* other links in the sidebarmenu */
+/*.skin-blue .main-sidebar .sidebar .sidebar-menu a{
+  background-color: #81BC00;
+  color: #81BC00;
+  }*/
+
+/* other links in the sidebarmenu when hovered */
+.skin-blue .main-sidebar .sidebar .sidebar-menu a:hover{
+  background-color: #81BC00;
+  }
+/* toggle button when hovered  */
+.skin-blue .main-header .navbar .sidebar-toggle:hover{
+  background-color: #00A1DE;
+  }
+
+#BAU-gd_print, #DEV1-gd_print, #DEV2-gd_print, #DEV3-gd_print {
+  background-color: white;
+  border-color: white;
+  color: black;
+  }
+
+
+.box { margin-bottom: 0; }
+[class*="col-lg-"],[class*="col-md-"],
+[class*="col-sm-"],[class*="col-xs-"]{
+  padding-right:1mm !important;
+  padding-left:1mm !important;
+  padding-top:2mm !important;
+  padding-bottom:2mm !important;
+}
