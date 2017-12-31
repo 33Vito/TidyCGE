@@ -47,7 +47,7 @@ dashboardPage(
                 src = 'DEL_PRI_Access_Econ_RGB-01.jpg',
                 class = 'logo',
                 height = '65',
-                width = '190'
+                width = '180'
               )
             ))
       }),

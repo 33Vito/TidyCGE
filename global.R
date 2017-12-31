@@ -20,9 +20,9 @@ options(shiny.maxRequestSize=30*1024^2,
 
 start_year <- 2016
 
-# load image data currently
-
 library(leaflet)
+
+# load image data currently
 load("SYD_LGA_state.RData")
 
 # library(sp)

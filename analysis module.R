@@ -11,9 +11,9 @@ analysisUI <- function(id) {
   
   tagList(
     div(id = ns("upload_box"),
-        box(width = 4, 
+        box(width = 5, 
             div(style="display: inline-block;vertical-align:top;",
-                fileInput(ns("input_csv"), "upload csv file", width = "350px",
+                fileInput(ns("input_csv"), "upload csv file", width = "450px",
                           accept = c("text/csv","text/comma-separated-values,text/plain",".csv"))), 
             div(style="display: inline-block;vertical-align:top; padding-top: 26px;",
                 actionButton(ns("toggle"), "Run")),
@@ -22,7 +22,7 @@ analysisUI <- function(id) {
             # div(style="display: inline-block;vertical-align:top; padding-top: 26px;",
             #     actionButton(ns("download_button"), "download"))
         ), 
-        box(width = 6, height = "123px", 
+        box(width = 7, height = "120px", 
             div(style="display: inline-block;vertical-align:top;",
             checkboxGroupInput(ns("download_list"),
                              label = "List of variables to download",
@@ -33,13 +33,13 @@ analysisUI <- function(id) {
             div(style="display: inline-block;vertical-align:top;",
                 uiOutput(ns("download_reg"), width = "400px")), 
             actionButton(ns("download_button"), "download (work in progress)", width = "800px")
-          ), 
-        box(width = 2, height = "123px", 
-        div(style="display:center-align; vertical-align:top; padding-top:10px; padding-left:50px;",
-            # style="display:center-align",
-            tags$img(src = "data-science-v2.gif", width = "150px", height = "90px")
-            )
-        ) # End of box
+          )
+        # box(width = 2, height = "123px", 
+        # div(style="display:center-align; vertical-align:top; padding-top:10px; padding-left:50px;",
+        #     # style="display:center-align",
+        #     tags$img(src = "data-science-v2.gif", width = "150px", height = "100px")
+        #     )
+        # ) # End of box
     ), # End of div
     
     shinyjs::hidden(
