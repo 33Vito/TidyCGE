@@ -24,8 +24,8 @@ dashboardPage(
       textInput("RegName", "Shock Region", value = "SYD"),
       textInput("StateName", "Shock State", value = "RON"),
       
-      menuItem("LGA", tabName = "LGA", icon = icon("map-marker")), 
       menuItem("BAU", tabName = "BAU", icon = icon("database")),
+      menuItem("LGA", tabName = "LGA", icon = icon("map-marker")), 
       menuItem("DEV1", tabName = "DEV1", icon = icon("dashboard")),
       menuItem("DEV2", tabName = "DEV2", icon = icon("dashboard")),
       menuItem("DEV3", tabName = "DEV3", icon = icon("dashboard")),

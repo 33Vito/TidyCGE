@@ -51,7 +51,7 @@ analysisUI <- function(id) {
                           valueBoxOutput(ns("GDP_state_vb"), width = 3),
                           valueBoxOutput(ns("GDP_roa_vb"), width = 3),
                           valueBoxOutput(ns("GDP_au_vb"), width = 3)
-          )#end of column),
+                          ) # end of column,
           ),
           # end of row
           
@@ -132,6 +132,14 @@ analysisUI <- function(id) {
               collapsed = TRUE,
               DT::dataTableOutput(ns("data1_dt")) %>% withSpinner()
             ) # End of Box
+          ), 
+          
+          fluidRow(column(width = 12,
+                          valueBoxOutput(ns("dim_reg_vb"), width = 3),
+                          valueBoxOutput(ns("dim_commo_vb"), width = 3),
+                          valueBoxOutput(ns("dim_year_vb"), width = 3), 
+                          valueBoxOutput(ns("dim_var_vb"), width = 3)
+          ) # end of column,
           ) # End of Fluid Row
         ) # End of fluidPage
     ) # End of div
@@ -293,6 +301,33 @@ analysis <- function(input, output, session, Year, RegName, StateName) {
       paste0("$", .) %>% 
       valueBox(paste0("GDP in AU, ", Year()), 
                icon = icon("money"), color = "navy")
+  })
+  
+  output$dim_reg_vb <- renderValueBox({
+    valueBox(n_distinct(data1()$d3) - 2, "Regions", 
+             icon = icon("map"), color = "olive")
+  })
+  
+  output$dim_commo_vb <- renderValueBox({
+    valueBox(n_distinct(data1()$d2) - n_distinct(data1()$d3) - 2, "Commodities (including CGDS)", 
+             icon = icon("bar-chart"), color = "aqua")
+  })
+  
+  output$dim_year_vb <- renderValueBox({
+    valueBox(ncol(data1()) - 6, "Years", 
+             icon = icon("line-chart"), color = "orange")
+  })
+  
+  output$dim_var_vb <- renderValueBox({
+    nvar <- data1() %>% 
+      mutate(group = ifelse(str_count(Solution, "_") == 0, 
+                            v1, paste(v1,v2, sep="_"))) %>% 
+      group_by(group) %>% 
+      nest() %>% 
+      nrow() 
+    
+    valueBox(nvar, "Variables", 
+             icon = icon("list-ul"), color = "maroon")
   })
   
   #--------------------------BAU_GDP--------------------------------------
