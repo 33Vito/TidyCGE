@@ -309,7 +309,8 @@ analysis <- function(input, output, session, Year, RegName, StateName) {
   })
   
   output$dim_commo_vb <- renderValueBox({
-    valueBox(n_distinct(data1()$d2) - n_distinct(data1()$d3) - 2, "Commodities (including CGDS)", 
+    valueBox(n_distinct(data1()$d2) - n_distinct(data1()$d3) - 3, 
+             "Commodities", 
              icon = icon("bar-chart"), color = "aqua")
   })
   
@@ -409,10 +410,12 @@ analysis <- function(input, output, session, Year, RegName, StateName) {
   output$qva_scat <- renderPlotly({
     
     g1 <- inner_join(BAU_qva(), BAU_qVAind(), by = c("d1", "year")) %>% 
-      ggplot(aes(x=qVAind, y=qva, col=d1)) + 
+      ggplot(aes(x=qVAind, y=qva/100, col=d1)) + 
       geom_point(alpha = .1) + 
       geom_point(aes(frame = year, ids = d1)) +
       scale_color_manual(values = colorRampPalette(brewer.pal(8, "Set2"))(19)) + 
+      ggy(percent, "qva") + 
+      ggx(comma) +
       ggl("right")
     
     ggplotly(g1) %>% 
@@ -439,6 +442,13 @@ analysis <- function(input, output, session, Year, RegName, StateName) {
     dd <- BAU_qVAind() %>% 
       left_join(BAU_qva(), by = c("year", "d1")) %>% 
       mutate(d1 = fct_reorder(d1, qVAind, function(x) mean(x, na.rm=T)))
+      # mutate(d1 = fct_relevel(d1, c("FF", "LSTK", "CROPS", 
+      #                               "COG", "IRON", "DWE", 
+      #                               "ISR", 
+      #                               "ELY", "CMN", "REC", 
+      #                               "LMAN", "FMAN", "HMAN", 
+      #                               "TRN", "CNS", 
+      #                               "TRD", "OFI", "OBS", "OSG")))
     
     p1 <- dd %>% 
       mutate(zeros = 0) %>% 
