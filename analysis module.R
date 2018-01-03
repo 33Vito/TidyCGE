@@ -16,11 +16,11 @@ analysisUI <- function(id) {
                 fileInput(ns("input_csv"), "upload csv file", width = "450px",
                           accept = c("text/csv","text/comma-separated-values,text/plain",".csv"))), 
             div(style="display: inline-block;vertical-align:top; padding-top: 26px;",
-                actionButton(ns("toggle"), "Run")),
+                actionButton(ns("input_toggle"), "Run")),
             div(style="display: inline-block;vertical-align:top; padding-top: 26px;",
-                actionButton(ns("input_hide"), "Hide"))
-            # div(style="display: inline-block;vertical-align:top; padding-top: 26px;",
-            #     actionButton(ns("download_button"), "download"))
+                actionButton(ns("input_hide"), "Hide")),
+            div(style="display: inline-block;vertical-align:top; padding-top: 26px;",
+                actionButton(ns("input_demo"), "demo"))
         ), 
         box(width = 7, height = "120px", 
             div(style="display: inline-block;vertical-align:top;",
@@ -147,13 +147,17 @@ analysisUI <- function(id) {
   ) # End of tagList
 }
 
-analysis <- function(input, output, session, Year, RegName, StateName) {
+analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   #--------------------------Load csv------------------------------------------
   data1 <- reactive({
     inFile <- input$input_csv
+    
+    if (input$input_demo) input_file <- ifelse(Tab() == "BAU", "BAUB-ssy copy.csv", 
+                                              "BAUB-AG1P-devc copy.csv")
+    else input_file <- inFile$datapath
     dd <- 
       # read_csv("BAUB-ssy copy.csv") %>% 
-      read_csv(inFile$datapath, col_types = "cdddddddddddddddddddddddddddddddddddddddd") %>% 
+      read_csv(input_file, col_types = "cdddddddddddddddddddddddddddddddddddddddd") %>% 
       select(Solution, matches(".*\\-[0-9]{4}")) %>% 
       separate(Solution, into = c("v1","v2","d1", "d2", "d3"), remove = F) %>% 
       mutate(d2 = ifelse(str_count(Solution, "_") == 0, d1, d2)) %>% 
@@ -166,7 +170,8 @@ analysis <- function(input, output, session, Year, RegName, StateName) {
   })
   
   shinyjs::onclick("input_hide",shinyjs::hide(id = "upload_box", anim = TRUE))
-  shinyjs::onclick("toggle",shinyjs::toggle(id = "analysis_div", anim = TRUE))
+  shinyjs::onclick("input_toggle",shinyjs::toggle(id = "analysis_div", anim = TRUE))
+  shinyjs::onclick("input_demo",shinyjs::toggle(id = "analysis_div", anim = TRUE))
   
   output$gd_print <- renderPrint({
     data1() %>% 
