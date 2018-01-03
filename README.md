@@ -9,3 +9,7 @@ The two csv files used in demo:
 
 * BAU: BAUB-ssy copy.csv
 * DEV: BAUB-AG1P-devc copy.csv
+
+Shinyio URL:
+
+[https://tony-yanjun.shinyapps.io/TidyCGE/]
