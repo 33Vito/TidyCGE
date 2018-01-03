@@ -1,4 +1,12 @@
 
+list.of.packages <- c("tidyverse", "forcats", "viridis", "RColorBrewer", "DT", "scales", 
+                      "lazyeval", "Hmisc", "broom", "plotly", "leaflet", "htmlTable", 
+                      "gridExtra", "ggalt", "ggrepel", "lubridate", 
+                      "stringr", "openxlsx", "grid", "kableExtra", 
+                      "shiny", "shinydashboard", "shinycssloaders", "shinyjs")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if (length(new.packages) > 0) install.packages(new.packages)
+
 library(forcats)
 library(viridis)
 library(RColorBrewer)
