@@ -10,6 +10,4 @@ The two csv files used in demo:
 * BAU: BAUB-ssy copy.csv
 * DEV: BAUB-AG1P-devc copy.csv
 
-App URL (shinyapps.io):
-
-https://tony-yanjun.shinyapps.io/TidyCGE/
+App URL (shinyapps.io): https://tony-yanjun.shinyapps.io/TidyCGE/
