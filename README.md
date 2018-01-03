@@ -7,5 +7,5 @@ The app utilises [shiny modules](https://shiny.rstudio.com/articles/modules.html
 
 The two csv files can be uploaded for demo:
 
-*BAU: BAUB-ssy copy.csv
-*DEV: BAUB-AG1P-devc copy.csv
+* BAU: BAUB-ssy copy.csv
+* DEV: BAUB-AG1P-devc copy.csv
