@@ -32,7 +32,7 @@ analysisUI <- function(id) {
                              width = "400px")), 
             div(style="display: inline-block;vertical-align:top;",
                 uiOutput(ns("download_reg"), width = "400px")), 
-            actionButton(ns("download_button"), "download (work in progress)", width = "800px")
+            actionButton(ns("download_button"), "download (work in progress)", width = "750px")
           )
         # box(width = 2, height = "123px", 
         # div(style="display:center-align; vertical-align:top; padding-top:10px; padding-left:50px;",
