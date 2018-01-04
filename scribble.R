@@ -1,6 +1,6 @@
 
-setwd("C:/Users/Tony/Google Drive/shinyapp/CGE dashboard/TidyCGE_v0.2")
-# setwd("~/Google Drive/shinyapp/CGE dashboard/TidyCGE_v0.2")
+# setwd("C:/Users/Tony/Google Drive/shinyapp/CGE dashboard/TidyCGE_v0.2")
+setwd("~/Google Drive/shinyapp/CGE dashboard/TidyCGE_v0.2")
 source("TL gogogo.R")
 
 options(scipen=999, expressions=50000, 
@@ -234,12 +234,12 @@ trade_bar_chart_types <- list(
     
     list(method = "restyle",
          args = list("type", "bar"),
-         label = "Bar"),
+         label = "Bar"), 
     
     list(method = "restyle",
          args = list("type", "scatter"),
+         # args = list(list("type", "scatter"), list("mode", "lines+markers")),
          label = "Line")
-    
   ))
 
 data1 %>% 
@@ -253,18 +253,24 @@ data1 %>%
   filter(d2 %in% c("SYD", "RON", "ROA")) %>%
   spread(d2, value) %>% 
   
-  plot_ly() %>% 
-  add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), 
+  # plot_ly(type = "scatter", mode = "markers+lines") %>% 
+  plot_ly(type = "bar") %>% 
+  add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]), 
           visible = "legendonly") %>% 
-  add_trace(x=~d1, y=~SYD, frame = ~year, name = "SYD", color = I(DC[2]), visible = T) %>% 
-  add_trace(x=~d1, y=~RON, frame = ~year, name = "RON", color = I(DC[3]), visible = T) %>% 
+  add_trace(x=~year, y=~SYD, frame = ~d1, name = "SYD", color = I(DC[2]), visible = T) %>% 
+  add_trace(x=~year, y=~RON, frame = ~d1, name = "RON", color = I(DC[3]), visible = T) %>% 
   # add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), visible = "legendonly") %>% 
   
-  layout(updatemenus = list(chart_types), 
-         xaxis = list(title = ""),
+  layout(updatemenus = list(trade_bar_chart_types), 
+         legend = list(x = 0.9, y = 1), 
+         xaxis = list(title = "", dtick = 2),
          yaxis = list(title = "Aggregated export")) %>% 
   
-  animation_opts(1000, redraw = T)
+  animation_opts(1000, easing = "elastic", redraw = T) %>%
+  
+  animation_slider(
+    currentvalue = list(prefix = "Commodity ", font = list(color="black"))
+  )
 
 
 

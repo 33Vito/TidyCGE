@@ -68,11 +68,12 @@ trade_bar_chart_types <- list(
     
     list(method = "restyle",
          args = list("type", "bar"),
-         label = "Bar"),
+         label = "Bar"), 
     
     list(method = "restyle",
          args = list("type", "scatter"),
          label = "Line")
+    
   ))
 
 

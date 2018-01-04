@@ -13,7 +13,7 @@ analysisUI <- function(id) {
     div(id = ns("upload_box"),
         box(width = 5, 
             div(style="display: inline-block;vertical-align:top;",
-                fileInput(ns("input_csv"), "upload csv file", width = "450px",
+                fileInput(ns("input_csv"), "upload csv file", width = "360px",
                           accept = c("text/csv","text/comma-separated-values,text/plain",".csv"))), 
             div(style="display: inline-block;vertical-align:top; padding-top: 26px;",
                 actionButton(ns("input_toggle"), "Run")),
@@ -123,19 +123,31 @@ analysisUI <- function(id) {
           
           fluidRow(
             box(
-              title = "Trade",
+              title = "Export",
               status = "primary",
-              width = 12,
+              width = 6,
               # height = 300,
               solidHeader = FALSE,
               collapsible = TRUE,
               collapsed = FALSE,
-              tabsetPanel(
-              tabPanel("Export", plotlyOutput(ns("qex_ind_bar")) %>% withSpinner()),
-              tabPanel("Import", plotlyOutput(ns("qimp_ind_bar")) %>% withSpinner())
-              )
-            )
-          ), 
+              plotlyOutput(ns("qex_ind_bar")) %>% withSpinner()
+              # tabsetPanel(
+              # tabPanel("Export", plotlyOutput(ns("qex_ind_bar")) %>% withSpinner()),
+              # tabPanel("Import", plotlyOutput(ns("qimp_ind_bar")) %>% withSpinner())
+              # )
+            ), 
+            
+            box(
+              title = "Import",
+              status = "primary",
+              width = 6,
+              # height = 300,
+              solidHeader = FALSE,
+              collapsible = TRUE,
+              collapsed = FALSE,
+              plotlyOutput(ns("qimp_ind_bar")) %>% withSpinner()
+          ) # End of box
+          ), # End of fluidRow
           
           fluidRow(
             box(
@@ -250,7 +262,7 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
       )
   })
   
-  #--------------------------vb------------------------------------------
+  #--------------------------ValueBox------------------------------------------
   output$GDP_reg_vb <- renderValueBox({
     c <- data1() %>% 
       filter(v1 == "c", v2 == "GDP") %>%
@@ -594,19 +606,24 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
       filter(d2 %in% c(RegName(), StateName(), "ROA")) %>%
       spread(d2, value) %>% 
       
-      plot_ly() %>% 
-      add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), 
-              visible = "legendonly", type = "bar") %>% 
-      add_trace(x=~d1, y=~get(RegName()), frame = ~year, name = RegName(), 
+      # plot_ly(type = "scatter", mode = "lines+markers") %>% 
+      plot_ly(type = "bar") %>% 
+      add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]), 
+              visible = "legendonly") %>% 
+      add_trace(x=~year, y=~get(RegName()), frame = ~d1, name = RegName(), 
                 color = I(DC[2]), visible = T) %>% 
-      add_trace(x=~d1, y=~get(StateName()), frame = ~year, name = StateName(), 
+      add_trace(x=~year, y=~get(StateName()), frame = ~d1, name = StateName(), 
                 color = I(DC[3]), visible = T) %>% 
       
       layout(updatemenus = list(trade_bar_chart_types), 
-             xaxis = list(title = ""),
+             # legend = list(x = 0.9, y = 1), 
+             xaxis = list(title = "", dtick = 2),
              yaxis = list(title = "Aggregated export (qex)")) %>% 
       
-      animation_opts(1000, redraw = T)
+      animation_slider(
+        currentvalue = list(prefix = "Commodity ", font = list(color="red"))
+      )
+    
   })
   
   output$qimp_ind_bar <- renderPlotly({
@@ -622,19 +639,23 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
       filter(d2 %in% c(RegName(), StateName(), "ROA")) %>%
       spread(d2, value) %>% 
       
-      plot_ly() %>% 
-      add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), 
-              visible = "legendonly", type = "bar") %>% 
-      add_trace(x=~d1, y=~get(RegName()), frame = ~year, name = RegName(), 
+      # plot_ly(type = "scatter", mode = "lines+markers") %>% 
+      plot_ly(type = "bar") %>% 
+      add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]), 
+              visible = "legendonly") %>% 
+      add_trace(x=~year, y=~get(RegName()), frame = ~d1, name = RegName(), 
                 color = I(DC[2]), visible = T) %>% 
-      add_trace(x=~d1, y=~get(StateName()), frame = ~year, name = StateName(), 
+      add_trace(x=~year, y=~get(StateName()), frame = ~d1, name = StateName(), 
                 color = I(DC[3]), visible = T) %>% 
       
       layout(updatemenus = list(trade_bar_chart_types), 
-             xaxis = list(title = ""),
+             # legend = list(x = 0.9, y = 1), 
+             xaxis = list(title = "", dtick = 2),
              yaxis = list(title = "Aggregated import (qimp)")) %>% 
       
-      animation_opts(1000, redraw = T)
+      animation_slider(
+        currentvalue = list(prefix = "Commodity ", font = list(color="red"))
+      )
   })
 }
 
