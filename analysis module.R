@@ -123,6 +123,22 @@ analysisUI <- function(id) {
           
           fluidRow(
             box(
+              title = "Trade",
+              status = "primary",
+              width = 12,
+              # height = 300,
+              solidHeader = FALSE,
+              collapsible = TRUE,
+              collapsed = FALSE,
+              tabsetPanel(
+              tabPanel("Export", plotlyOutput(ns("qex_ind_bar")) %>% withSpinner()),
+              tabPanel("Import", plotlyOutput(ns("qimp_ind_bar")) %>% withSpinner())
+              )
+            )
+          ), 
+          
+          fluidRow(
+            box(
               title = "Raw data",
               status = "primary",
               width = 12,
@@ -160,6 +176,7 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
       read_csv(input_file, col_types = "cdddddddddddddddddddddddddddddddddddddddd") %>% 
       select(Solution, matches(".*\\-[0-9]{4}")) %>% 
       separate(Solution, into = c("v1","v2","d1", "d2", "d3"), remove = F) %>% 
+      mutate(d3 = ifelse(str_count(Solution, "_") == 0, d2, d3)) %>% 
       mutate(d2 = ifelse(str_count(Solution, "_") == 0, d1, d2)) %>% 
       mutate(d1 = ifelse(str_count(Solution, "_") == 0, v2, d1)) %>% 
       mutate(v2 = ifelse(str_count(Solution, "_") == 0, NA, v2))
@@ -233,7 +250,7 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
       )
   })
   
-  #--------------------------BAU_vb------------------------------------------
+  #--------------------------vb------------------------------------------
   output$GDP_reg_vb <- renderValueBox({
     c <- data1() %>% 
       filter(v1 == "c", v2 == "GDP") %>%
@@ -336,7 +353,7 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
              icon = icon("list-ul"), color = "maroon")
   })
   
-  #--------------------------BAU_GDP--------------------------------------
+  #--------------------------GDP--------------------------------------
   output$GDP_bar <- renderPlotly({
     g1 <- data1() %>% 
       filter(v1 == "c", v2 == "GDP") %>%
@@ -381,7 +398,7 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
       layout(margin = list(l = 60))
   })
   
-  #--------------------------BAU_GVA--------------------------------------
+  #--------------------------GVA--------------------------------------
   BAU_qva <- reactive({
     req(input$gvaRegName)
     
@@ -538,7 +555,7 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
                                            font = list(color = DC[2])))
   })
   
-  #--------------------------BAU_FTE--------------------------------------
+  #--------------------------FTE--------------------------------------
   output$FTE_bar <- renderPlotly({
     g1 <- data1() %>% 
       filter(v1 == "empl") %>% 
@@ -564,4 +581,64 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
     
   })
   
+  #--------------------------Trade--------------------------------------
+  output$qex_ind_bar <- renderPlotly({
+    data1() %>% 
+      filter(v1 == "qex") %>% 
+      select(-Solution, -v1, -v2, -d3) %>%
+      mutate(d1 = fct_inorder(d1)) %>% 
+      gather(year, value, -d1, -d2) %>% 
+      mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>% 
+      
+      filter(year >= start_year) %>% 
+      filter(d2 %in% c(RegName(), StateName(), "ROA")) %>%
+      spread(d2, value) %>% 
+      
+      plot_ly(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), 
+              visible = "legendonly", type = "bar") %>% 
+      add_trace(x=~d1, y=~get(RegName()), frame = ~year, name = RegName(), 
+                color = I(DC[2]), visible = T) %>% 
+      add_trace(x=~d1, y=~get(StateName()), frame = ~year, name = StateName(), 
+                color = I(DC[3]), visible = T) %>% 
+      
+      layout(xaxis = list(title = ""),
+             yaxis = list(title = "Aggregated export (qex)")) %>% 
+      
+      animation_opts(1000, redraw = T)
+  })
+  
+  output$qimp_ind_bar <- renderPlotly({
+    
+    data1() %>% 
+      filter(v1 == "qimp") %>% 
+      select(-Solution, -v1, -v2, -d3) %>%
+      mutate(d1 = fct_inorder(d1)) %>% 
+      gather(year, value, -d1, -d2) %>% 
+      mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>% 
+      
+      filter(year >= start_year) %>% 
+      filter(d2 %in% c(RegName(), StateName(), "ROA")) %>%
+      spread(d2, value) %>% 
+      
+      plot_ly(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), 
+              visible = "legendonly", type = "bar") %>% 
+      add_trace(x=~d1, y=~get(RegName()), frame = ~year, name = RegName(), 
+                color = I(DC[2]), visible = T) %>% 
+      add_trace(x=~d1, y=~get(StateName()), frame = ~year, name = StateName(), 
+                color = I(DC[3]), visible = T) %>% 
+      
+      layout(xaxis = list(title = ""),
+             yaxis = list(title = "Aggregated import (qimp)")) %>% 
+      
+      animation_opts(1000, redraw = T)
+  })
 }
+
+
+
+
+
+
+
+
+

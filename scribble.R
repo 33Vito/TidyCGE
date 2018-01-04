@@ -14,6 +14,7 @@ options(scipen=999, expressions=50000,
 data1 <- read_csv("BAUB-ssy copy.csv") %>% 
   select(Solution, matches(".*\\-[0-9]{4}")) %>% 
   separate(Solution, into = c("v1","v2","d1", "d2", "d3"), remove = F) %>% 
+  mutate(d3 = ifelse(str_count(Solution, "_") == 0, d2, d3)) %>% 
   mutate(d2 = ifelse(str_count(Solution, "_") == 0, d1, d2)) %>% 
   mutate(d1 = ifelse(str_count(Solution, "_") == 0, v2, d1)) %>% 
   mutate(v2 = ifelse(str_count(Solution, "_") == 0, NA, v2))
@@ -203,6 +204,59 @@ leaflet(LGA_state) %>%
       textsize = "15px",
       direction = "auto")
   )
+
+
+library(chorddiag)
+library(d3heatmap)
+
+data1 %>% 
+  filter(v1 == "qex") %>% 
+  rename(value = "baub-2017") %>% 
+  select(d1, d2, value) %>% 
+  spread(d2, value) %>% 
+  as.data.frame() %>% 
+  `rownames<-`(NULL) %>% 
+  column_to_rownames("d1") %>% 
+  select("SYD", "RON", "ROA", "NZ", "CHN", "IND") %>% 
+  as.matrix() %>% 
+  
+  d3heatmap(colors = "Blues", dendrogram = "none", scale = "none")
+  
+
+data1 %>% 
+  filter(v1 == "qex") %>% 
+  select(-Solution, -v1, -v2, -d3) %>%
+  mutate(d1 = fct_inorder(d1)) %>% 
+  gather(year, value, -d1, -d2) %>% 
+  mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>% 
+  
+  filter(year >= start_year) %>% 
+  filter(d2 %in% c("SYD", "RON", "ROA")) %>%
+  spread(d2, value) %>% 
+  
+  plot_ly(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), 
+          visible = "legendonly", type = "bar") %>% 
+  add_trace(x=~d1, y=~SYD, frame = ~year, name = "SYD", color = I(DC[2]), visible = T) %>% 
+  add_trace(x=~d1, y=~RON, frame = ~year, name = "RON", color = I(DC[3]), visible = T) %>% 
+  # add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), visible = "legendonly") %>% 
+  
+  layout(xaxis = list(title = ""),
+         yaxis = list(title = "Aggregated export")) %>% 
+  
+  animation_opts(1000, redraw = T)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
