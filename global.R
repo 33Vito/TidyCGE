@@ -1,4 +1,5 @@
 
+#--------------------loading packages-----------------------
 # setwd("C:/Users/Tony/Google Drive/shinyapp/CGE dashboard/TidyCGE_v0.2")
 # setwd("~/Google Drive/shinyapp/CGE dashboard/TidyCGE_v0.2")
 source("TL gogogo.R")
@@ -20,6 +21,7 @@ options(shiny.maxRequestSize=30*1024^2,
 
 start_year <- 2016
 
+#--------------------loading Shapefiles-----------------------
 library(leaflet)
 
 # load image data currently
@@ -51,3 +53,28 @@ SYD_LGA <- SYD_LGA$LGA[SYD_LGA$X__1 > 0][1:44]
 
 # load module
 source("analysis module.R")
+
+#--------------------plotly misc-----------------------
+
+trade_bar_chart_types <- list(
+  type = "buttons",
+  direction = "left",
+  xanchor = 'center',
+  yanchor = "top",
+  pad = list('r'= 0, 't'= 10, 'b' = 10),
+  x = 0,
+  y = 1.3,
+  buttons = list(
+    
+    list(method = "restyle",
+         args = list("type", "bar"),
+         label = "Bar"),
+    
+    list(method = "restyle",
+         args = list("type", "scatter"),
+         label = "Line")
+  ))
+
+
+
+

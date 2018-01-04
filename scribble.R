@@ -221,7 +221,26 @@ data1 %>%
   as.matrix() %>% 
   
   d3heatmap(colors = "Blues", dendrogram = "none", scale = "none")
-  
+ 
+trade_bar_chart_types <- list(
+  type = "buttons",
+  direction = "left",
+  xanchor = 'center',
+  yanchor = "top",
+  pad = list('r'= 0, 't'= 10, 'b' = 10),
+  x = 0,
+  y = 1.3,
+  buttons = list(
+    
+    list(method = "restyle",
+         args = list("type", "bar"),
+         label = "Bar"),
+    
+    list(method = "restyle",
+         args = list("type", "scatter"),
+         label = "Line")
+    
+  ))
 
 data1 %>% 
   filter(v1 == "qex") %>% 
@@ -234,13 +253,15 @@ data1 %>%
   filter(d2 %in% c("SYD", "RON", "ROA")) %>%
   spread(d2, value) %>% 
   
-  plot_ly(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), 
-          visible = "legendonly", type = "bar") %>% 
+  plot_ly() %>% 
+  add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), 
+          visible = "legendonly") %>% 
   add_trace(x=~d1, y=~SYD, frame = ~year, name = "SYD", color = I(DC[2]), visible = T) %>% 
   add_trace(x=~d1, y=~RON, frame = ~year, name = "RON", color = I(DC[3]), visible = T) %>% 
   # add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), visible = "legendonly") %>% 
   
-  layout(xaxis = list(title = ""),
+  layout(updatemenus = list(chart_types), 
+         xaxis = list(title = ""),
          yaxis = list(title = "Aggregated export")) %>% 
   
   animation_opts(1000, redraw = T)

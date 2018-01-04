@@ -594,14 +594,16 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
       filter(d2 %in% c(RegName(), StateName(), "ROA")) %>%
       spread(d2, value) %>% 
       
-      plot_ly(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), 
+      plot_ly() %>% 
+      add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), 
               visible = "legendonly", type = "bar") %>% 
       add_trace(x=~d1, y=~get(RegName()), frame = ~year, name = RegName(), 
                 color = I(DC[2]), visible = T) %>% 
       add_trace(x=~d1, y=~get(StateName()), frame = ~year, name = StateName(), 
                 color = I(DC[3]), visible = T) %>% 
       
-      layout(xaxis = list(title = ""),
+      layout(updatemenus = list(trade_bar_chart_types), 
+             xaxis = list(title = ""),
              yaxis = list(title = "Aggregated export (qex)")) %>% 
       
       animation_opts(1000, redraw = T)
@@ -620,14 +622,16 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
       filter(d2 %in% c(RegName(), StateName(), "ROA")) %>%
       spread(d2, value) %>% 
       
-      plot_ly(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), 
+      plot_ly() %>% 
+      add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), 
               visible = "legendonly", type = "bar") %>% 
       add_trace(x=~d1, y=~get(RegName()), frame = ~year, name = RegName(), 
                 color = I(DC[2]), visible = T) %>% 
       add_trace(x=~d1, y=~get(StateName()), frame = ~year, name = StateName(), 
                 color = I(DC[3]), visible = T) %>% 
       
-      layout(xaxis = list(title = ""),
+      layout(updatemenus = list(trade_bar_chart_types), 
+             xaxis = list(title = ""),
              yaxis = list(title = "Aggregated import (qimp)")) %>% 
       
       animation_opts(1000, redraw = T)
