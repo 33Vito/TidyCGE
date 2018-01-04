@@ -367,7 +367,7 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   
   #--------------------------GDP--------------------------------------
   output$GDP_bar <- renderPlotly({
-    g1 <- data1() %>% 
+    data1() %>% 
       filter(v1 == "c", v2 == "GDP") %>%
       filter(d2 %in% c(RegName(),StateName(),"ROA")) %>% 
       select(d2, matches(".*\\-[0-9]{4}")) %>% 
@@ -375,16 +375,34 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
       mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
       mutate(d2 = fct_relevel(d2, c(RegName(),StateName(),"ROA"))) %>% 
       
-      ggplot(aes(x = year, y = value, fill = d2)) +
-      geom_col(position = position_dodge()) +
-      facet_wrap(~d2) +
-      ggy(comma, "") +
-      ggx(identity, "") +
-      ggf() + 
-      ggl("none")
+      filter(year >= start_year) %>% 
+      spread(d2, value) %>% 
+      
+      # plot_ly(type = "scatter", mode = "lines+markers") %>% 
+      plot_ly(type = "bar") %>% 
+      add_trace(x=~year, y=~ROA, name = "ROA", color = I(DC[1]), 
+                visible = "legendonly") %>% 
+      add_trace(x=~year, y=~get(RegName()), name = RegName(), 
+                color = I(DC[2]), visible = T) %>% 
+      add_trace(x=~year, y=~get(StateName()), name = StateName(), 
+                color = I(DC[3]), visible = T) %>% 
+      
+      layout(updatemenus = list(trade_bar_chart_types), 
+             # legend = list(x = 0.9, y = 1), 
+             bargap = 0.15, bargroupgap = 0.1, 
+             xaxis = list(title = "", dtick = 2),
+             yaxis = list(title = "c_GDP"))
+      
+      # ggplot(aes(x = year, y = value, fill = d2)) +
+      # geom_col(position = position_dodge()) +
+      # facet_wrap(~d2) +
+      # ggy(comma, "") +
+      # ggx(identity, "") +
+      # ggf() + 
+      # ggl("none")
     
-    ggplotly(g1, tooltip = c("year", "value")) %>% 
-      layout(margin = list(l = 60))
+    # ggplotly(g1, tooltip = c("year", "value")) %>% 
+    #   layout(margin = list(l = 60))
   })
   
   output$GDP_g_bar <- renderPlotly({
@@ -617,6 +635,7 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
       
       layout(updatemenus = list(trade_bar_chart_types), 
              # legend = list(x = 0.9, y = 1), 
+             bargap = 0.15, bargroupgap = 0.1, 
              xaxis = list(title = "", dtick = 2),
              yaxis = list(title = "Aggregated export (qex)")) %>% 
       
@@ -650,6 +669,7 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
       
       layout(updatemenus = list(trade_bar_chart_types), 
              # legend = list(x = 0.9, y = 1), 
+             bargap = 0.15, bargroupgap = 0.1, 
              xaxis = list(title = "", dtick = 2),
              yaxis = list(title = "Aggregated import (qimp)")) %>% 
       
