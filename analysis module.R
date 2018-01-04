@@ -637,7 +637,7 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
              # legend = list(x = 0.9, y = 1), 
              bargap = 0.15, bargroupgap = 0.1, 
              xaxis = list(title = "", dtick = 2),
-             yaxis = list(title = "Aggregated export (qex)")) %>% 
+             yaxis = list(title = "qex")) %>% 
       
       animation_slider(
         currentvalue = list(prefix = "Commodity ", font = list(color="red"))
@@ -671,7 +671,7 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
              # legend = list(x = 0.9, y = 1), 
              bargap = 0.15, bargroupgap = 0.1, 
              xaxis = list(title = "", dtick = 2),
-             yaxis = list(title = "Aggregated import (qimp)")) %>% 
+             yaxis = list(title = "qimp")) %>% 
       
       animation_slider(
         currentvalue = list(prefix = "Commodity ", font = list(color="red"))
