@@ -338,12 +338,12 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   })
   
   output$dim_reg_vb <- renderValueBox({
-    valueBox(n_distinct(data1()$d3) - 2, "Regions", 
+    valueBox(n_distinct(data1()$d3) - 3, "Regions", 
              icon = icon("map"), color = "olive")
   })
   
   output$dim_commo_vb <- renderValueBox({
-    valueBox(n_distinct(data1()$d2) - n_distinct(data1()$d3) - 3, 
+    valueBox(n_distinct(data1()$d2) - n_distinct(data1()$d3) - 2, 
              "Commodities", 
              icon = icon("bar-chart"), color = "aqua")
   })
