@@ -183,9 +183,11 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
     if (input$input_demo) input_file <- ifelse(Tab() == "BAU", "BAUB-ssy copy.csv", 
                                               "BAUB-AG1P-devc copy.csv")
     else input_file <- inFile$datapath
-    dd <- 
-      # read_csv("BAUB-ssy copy.csv") %>% 
-      read_csv(input_file, col_types = "cdddddddddddddddddddddddddddddddddddddddd") %>% 
+    
+    dd <- read_csv(input_file, col_types = "cdddddddddddddddddddddddddddddddddddddddd")
+    names(dd)[1] <- "Solution"
+    
+    dd <- dd %>% 
       select(Solution, matches(".*\\-[0-9]{4}")) %>% 
       separate(Solution, into = c("v1","v2","d1", "d2", "d3"), remove = F) %>% 
       mutate(d3 = ifelse(str_count(Solution, "_") == 0, d2, d3)) %>% 
@@ -193,7 +195,6 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
       mutate(d1 = ifelse(str_count(Solution, "_") == 0, v2, d1)) %>% 
       mutate(v2 = ifelse(str_count(Solution, "_") == 0, NA, v2))
     
-    names(dd)[1] <- "Solution"
     dd[str_detect(dd$Solution, "c_"), 7:ncol(dd)] <- 1.14*dd[str_detect(dd$Solution, "c_"), 7:ncol(dd)]
     dd
   })

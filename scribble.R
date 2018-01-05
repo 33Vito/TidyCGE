@@ -1,6 +1,6 @@
 
-# setwd("C:/Users/Tony/Google Drive/shinyapp/CGE dashboard/TidyCGE_v0.2")
-setwd("~/Google Drive/shinyapp/CGE dashboard/TidyCGE_v0.2")
+setwd("C:/Users/Tony/Google Drive/shinyapp/CGE dashboard/TidyCGE_v0.2")
+# setwd("~/Google Drive/shinyapp/CGE dashboard/TidyCGE_v0.2")
 source("TL gogogo.R")
 
 options(scipen=999, expressions=50000, 
