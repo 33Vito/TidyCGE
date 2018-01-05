@@ -200,8 +200,8 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   })
   
   shinyjs::onclick("input_hide",shinyjs::hide(id = "upload_box", anim = TRUE))
-  shinyjs::onclick("input_toggle",shinyjs::toggle(id = "analysis_div", anim = TRUE))
-  shinyjs::onclick("input_demo",shinyjs::toggle(id = "analysis_div", anim = TRUE))
+  shinyjs::onclick("input_toggle",shinyjs::show(id = "analysis_div", anim = TRUE))
+  shinyjs::onclick("input_demo",shinyjs::show(id = "analysis_div", anim = TRUE))
   
   output$gd_print <- renderPrint({
     data1() %>% 
