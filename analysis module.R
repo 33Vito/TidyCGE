@@ -63,7 +63,7 @@ analysisUI <- function(id) {
               width = 12,
               solidHeader = FALSE,
               collapsible = TRUE,
-              leafletOutput(ns("map_AU"),width="100%",height="440px") %>% withSpinner()
+              leafletOutput(ns("map_AU"),width="100%",height="440px") %>% withSpinner(type=1, color = DC[2])
             ),
             box(
               title = "Grouped data dimensions",
@@ -71,7 +71,7 @@ analysisUI <- function(id) {
               width = 12,
               solidHeader = FALSE,
               collapsible = TRUE,
-              verbatimTextOutput(ns("gd_print")) %>% withSpinner()
+              verbatimTextOutput(ns("gd_print")) %>% withSpinner(type=1, color = DC[2])
             ) # end of box
           ), # end of column
           column(
@@ -84,8 +84,8 @@ analysisUI <- function(id) {
               solidHeader = FALSE,
               collapsible = TRUE,
               tabsetPanel(
-                tabPanel("Value", plotlyOutput(ns("GDP_bar"), height = 400) %>% withSpinner()),
-                tabPanel("Growth", plotlyOutput(ns("GDP_g_bar"), height = 500) %>% withSpinner())
+                tabPanel("Value", plotlyOutput(ns("GDP_bar"), height = 400) %>% withSpinner(type=1, color = DC[2])),
+                tabPanel("Growth", plotlyOutput(ns("GDP_g_bar"), height = 500) %>% withSpinner(type=1, color = DC[2]))
               )
             ),
             box(
@@ -99,12 +99,12 @@ analysisUI <- function(id) {
               uiOutput(ns("gvaRegName")), 
               
               tabsetPanel(
-                tabPanel("Ordered bar", plotlyOutput(ns("qva_bar_o"), height = 600) %>% withSpinner()), 
-                tabPanel("Scatter", plotlyOutput(ns("qva_scat"), height = 600) %>% withSpinner()), 
-                tabPanel("qva_All", plotlyOutput(ns("qva_all"), height = 450) %>% withSpinner()), 
-                tabPanel("qVAind_All", plotlyOutput(ns("qVAind_all"), height = 450) %>% withSpinner()), 
-                tabPanel("Stacked bar", plotlyOutput(ns("qva_bar"), height = 600) %>% withSpinner()), 
-                tabPanel("Filled bar", plotlyOutput(ns("qva_bar_f"), height = 600) %>% withSpinner())
+                tabPanel("Ordered bar", plotlyOutput(ns("qva_bar_o"), height = 600) %>% withSpinner(type=1, color = DC[2])), 
+                tabPanel("Scatter", plotlyOutput(ns("qva_scat"), height = 600) %>% withSpinner(type=1, color = DC[2])), 
+                tabPanel("qva_All", plotlyOutput(ns("qva_all"), height = 450) %>% withSpinner(type=1, color = DC[2])), 
+                tabPanel("qVAind_All", plotlyOutput(ns("qVAind_all"), height = 450) %>% withSpinner(type=1, color = DC[2])), 
+                tabPanel("Stacked bar", plotlyOutput(ns("qva_bar"), height = 600) %>% withSpinner(type=1, color = DC[2])), 
+                tabPanel("Filled bar", plotlyOutput(ns("qva_bar_f"), height = 600) %>% withSpinner(type=1, color = DC[2]))
               )
             ),
             box(
@@ -116,7 +116,7 @@ analysisUI <- function(id) {
               collapsible = TRUE,
               # collapsed = T,
               tabsetPanel(# tabPanel("Value", plotlyOutput()),
-                tabPanel("Growth", plotlyOutput(ns("FTE_bar"), height = 500) %>% withSpinner()))
+                tabPanel("Growth", plotlyOutput(ns("FTE_bar"), height = 500) %>% withSpinner(type=1, color = DC[2])))
             ) # End of Box
           ) # End of column
           ),
@@ -130,10 +130,10 @@ analysisUI <- function(id) {
               solidHeader = FALSE,
               collapsible = TRUE,
               collapsed = FALSE,
-              plotlyOutput(ns("qex_ind_bar")) %>% withSpinner()
+              plotlyOutput(ns("qex_ind_bar")) %>% withSpinner(type=1, color = DC[2])
               # tabsetPanel(
-              # tabPanel("Export", plotlyOutput(ns("qex_ind_bar")) %>% withSpinner()),
-              # tabPanel("Import", plotlyOutput(ns("qimp_ind_bar")) %>% withSpinner())
+              # tabPanel("Export", plotlyOutput(ns("qex_ind_bar")) %>% withSpinner(type=1, color = DC[2])),
+              # tabPanel("Import", plotlyOutput(ns("qimp_ind_bar")) %>% withSpinner(type=1, color = DC[2]))
               # )
             ), 
             
@@ -145,7 +145,7 @@ analysisUI <- function(id) {
               solidHeader = FALSE,
               collapsible = TRUE,
               collapsed = FALSE,
-              plotlyOutput(ns("qimp_ind_bar")) %>% withSpinner()
+              plotlyOutput(ns("qimp_ind_bar")) %>% withSpinner(type=1, color = DC[2])
           ) # End of box
           ), # End of fluidRow
           
@@ -158,7 +158,7 @@ analysisUI <- function(id) {
               solidHeader = FALSE,
               collapsible = TRUE,
               collapsed = TRUE,
-              DT::dataTableOutput(ns("data1_dt")) %>% withSpinner()
+              DT::dataTableOutput(ns("data1_dt")) %>% withSpinner(type=1, color = DC[2])
             ) # End of Box
           ), 
           
