@@ -264,16 +264,20 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   })
   
   #--------------------------ValueBox------------------------------------------
+  prefix_year <- reactive({
+    ifelse(Tab() == "BAU", "baub-", "baub-runr-")
+  })
+  
   output$GDP_reg_vb <- renderValueBox({
     c <- data1() %>% 
       filter(v1 == "c", v2 == "GDP") %>%
       filter(d2 == RegName()) %>% 
-      .[paste0("baub-", Year())]
+      .[paste0(prefix_year(), Year())]
     
     r <- data1() %>% 
       filter(v1 == "gdp", v2 == "r") %>%
       filter(d1 == RegName()) %>% 
-      .[paste0("baub-", Year())]/100
+      .[paste0(prefix_year(), Year())]/100
     
     round(c/r) %>% 
       comma() %>% 
@@ -286,12 +290,12 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
     c <- data1() %>% 
       filter(v1 == "c", v2 == "GDP") %>%
       filter(d2 == StateName()) %>% 
-      .[paste0("baub-", Year())]
+      .[paste0(prefix_year(), Year())]
     
     r <- data1() %>% 
       filter(v1 == "gdp", v2 == "r") %>%
       filter(d1 == StateName()) %>% 
-      .[paste0("baub-", Year())]/100
+      .[paste0(prefix_year(), Year())]/100
     
     round(c/r) %>% 
       comma() %>% 
@@ -304,12 +308,12 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
     c <- data1() %>% 
       filter(v1 == "c", v2 == "GDP") %>%
       filter(d2 == "ROA") %>% 
-      .[paste0("baub-", Year())]
+      .[paste0(prefix_year(), Year())]
     
     r <- data1() %>% 
       filter(v1 == "gdp", v2 == "r") %>%
       filter(d1 == "ROA") %>% 
-      .[paste0("baub-", Year())]/100
+      .[paste0(prefix_year(), Year())]/100
     
     round(c/r) %>% 
       comma() %>% 
@@ -324,12 +328,12 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
       filter(d2 %in% c(RegName(),StateName(),"ROA")) %>% 
       select(matches(".*\\-[0-9]{4}")) %>% 
       map_df(sum) %>% 
-      .[paste0("baub-", Year())]
+      .[paste0(prefix_year(), Year())]
     
     r <- data1() %>% 
       filter(v1 == "gdp", v2 == "r") %>%
       filter(d1 == "AUS") %>% 
-      .[paste0("baub-", Year())]/100
+      .[paste0(prefix_year(), Year())]/100
     
     round(c/r) %>% 
       comma() %>% 
