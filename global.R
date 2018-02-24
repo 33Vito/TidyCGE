@@ -19,7 +19,7 @@ options(shiny.maxRequestSize=30*1024^2,
                           buttons = c('copy', 'csv', 'excel', 'pdf', 'print'), 
                           autoWidth = TRUE))
 
-start_year <- 2016
+start_year <- 2012
 
 #--------------------loading Shapefiles-----------------------
 library(leaflet)

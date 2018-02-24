@@ -74,6 +74,7 @@ analysisUI <- function(id) {
               verbatimTextOutput(ns("gd_print")) %>% withSpinner(type=1, color = DC[2])
             ) # end of box
           ), # end of column
+          
           column(
             width = 8,
             box(
@@ -85,9 +86,26 @@ analysisUI <- function(id) {
               collapsible = TRUE,
               tabsetPanel(
                 tabPanel("Value", plotlyOutput(ns("GDP_bar"), height = 400) %>% withSpinner(type=1, color = DC[2])),
-                tabPanel("Growth", plotlyOutput(ns("GDP_g_bar"), height = 500) %>% withSpinner(type=1, color = DC[2]))
+                tabPanel("Growth", plotlyOutput(ns("GDP_g_bar"), height = 400) %>% withSpinner(type=1, color = DC[2]))
               )
             ),
+            box(
+              title = "FTE (change)",
+              status = "primary",
+              width = 12,
+              # height = 300,
+              solidHeader = FALSE,
+              collapsible = TRUE,
+              # collapsed = T,
+              tabsetPanel(
+                tabPanel("Value", plotlyOutput(ns("FTE_bar"), height = 400) %>% withSpinner(type=1, color = DC[2])),
+                tabPanel("Growth", plotlyOutput(ns("FTE_g_bar"), height = 400) %>% withSpinner(type=1, color = DC[2]))
+              )
+            ) # End of Box
+          ), # End of column
+          
+          column(
+            width = 12, 
             box(
               title = "GVA (change)",
               status = "primary",
@@ -106,17 +124,6 @@ analysisUI <- function(id) {
                 tabPanel("Stacked bar", plotlyOutput(ns("qva_bar"), height = 600) %>% withSpinner(type=1, color = DC[2])), 
                 tabPanel("Filled bar", plotlyOutput(ns("qva_bar_f"), height = 600) %>% withSpinner(type=1, color = DC[2]))
               )
-            ),
-            box(
-              title = "FTE (change)",
-              status = "primary",
-              width = 12,
-              # height = 300,
-              solidHeader = FALSE,
-              collapsible = TRUE,
-              # collapsed = T,
-              tabsetPanel(# tabPanel("Value", plotlyOutput()),
-                tabPanel("Growth", plotlyOutput(ns("FTE_bar"), height = 500) %>% withSpinner(type=1, color = DC[2])))
             ) # End of Box
           ) # End of column
           ),
@@ -131,10 +138,6 @@ analysisUI <- function(id) {
               collapsible = TRUE,
               collapsed = FALSE,
               plotlyOutput(ns("qex_ind_bar")) %>% withSpinner(type=1, color = DC[2])
-              # tabsetPanel(
-              # tabPanel("Export", plotlyOutput(ns("qex_ind_bar")) %>% withSpinner(type=1, color = DC[2])),
-              # tabPanel("Import", plotlyOutput(ns("qimp_ind_bar")) %>% withSpinner(type=1, color = DC[2]))
-              # )
             ), 
             
             box(
@@ -180,8 +183,8 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   data1 <- reactive({
     inFile <- input$input_csv
     
-    if (input$input_demo) input_file <- ifelse(Tab() == "BAU", "BAUB-ssy copy.csv", 
-                                              "BAUB-AG1P-devc copy.csv")
+    if (input$input_demo) input_file <- ifelse(Tab() == "BAU", "BAUB-ssy simple.csv", 
+                                              "BAUB-RUNR-AG1P-devc simple.csv")
     else input_file <- inFile$datapath
     
     dd <- read_csv(input_file, col_types = "cdddddddddddddddddddddddddddddddddddddddd")
@@ -189,13 +192,13 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
     
     dd <- dd %>% 
       select(Solution, matches(".*\\-[0-9]{4}")) %>% 
-      separate(Solution, into = c("v1","v2","d1", "d2", "d3"), remove = F) %>% 
-      mutate(d3 = ifelse(str_count(Solution, "_") == 0, d2, d3)) %>% 
-      mutate(d2 = ifelse(str_count(Solution, "_") == 0, d1, d2)) %>% 
-      mutate(d1 = ifelse(str_count(Solution, "_") == 0, v2, d1)) %>% 
-      mutate(v2 = ifelse(str_count(Solution, "_") == 0, NA, v2))
-    
-    dd[str_detect(dd$Solution, "c_"), 7:ncol(dd)] <- 1.14*dd[str_detect(dd$Solution, "c_"), 7:ncol(dd)]
+      separate(Solution, into = c("var","d1", "d2", "d3"), remove = F)
+    #   mutate(d3 = ifelse(str_count(Solution, "_") == 0, d2, d3)) %>% 
+    #   mutate(d2 = ifelse(str_count(Solution, "_") == 0, d1, d2)) %>% 
+    #   mutate(d1 = ifelse(str_count(Solution, "_") == 0, v2, d1)) %>% 
+    #   mutate(v2 = ifelse(str_count(Solution, "_") == 0, NA, v2))
+    # 
+    # dd[str_detect(dd$Solution, "c_"), 7:ncol(dd)] <- 1.14*dd[str_detect(dd$Solution, "c_"), 7:ncol(dd)]
     dd
   })
   
@@ -205,8 +208,7 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   
   output$gd_print <- renderPrint({
     data1() %>% 
-      mutate(group = ifelse(str_count(Solution, "_") == 0, v1, paste(v1,v2, sep="_"))) %>% 
-      group_by(group) %>% 
+      group_by(var) %>% 
       nest() %>% 
       print(n = 100)
   })
@@ -229,8 +231,9 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   })
   
   output$gvaRegName <- renderUI({
+    Regname <- ifelse(RegName() == "", StateName(), RegName())
     selectizeInput(session$ns("gvaRegName"), "Select region: ", 
-                   c(RegName(), StateName(), "ROA"))
+                   c(Regname, StateName(), "ROA"))
   })
   
   #--------------------------Leaflet map--------------------------------------
@@ -269,17 +272,10 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   })
   
   output$GDP_reg_vb <- renderValueBox({
-    c <- data1() %>% 
-      filter(v1 == "c", v2 == "GDP") %>%
-      filter(d2 == RegName()) %>% 
-      .[paste0(prefix_year(), Year())]
-    
-    r <- data1() %>% 
-      filter(v1 == "gdp", v2 == "r") %>%
+    data1() %>% 
+      filter(var == "GDP2") %>%
       filter(d1 == RegName()) %>% 
-      .[paste0(prefix_year(), Year())]/100
-    
-    round(c/r) %>% 
+      .[[paste0(prefix_year(), Year())]] %>% 
       comma() %>% 
       paste0("$", .) %>% 
       valueBox(paste0("GDP in ", RegName(), ", ", Year()), 
@@ -287,17 +283,10 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   })
   
   output$GDP_state_vb <- renderValueBox({
-    c <- data1() %>% 
-      filter(v1 == "c", v2 == "GDP") %>%
-      filter(d2 == StateName()) %>% 
-      .[paste0(prefix_year(), Year())]
-    
-    r <- data1() %>% 
-      filter(v1 == "gdp", v2 == "r") %>%
+    data1() %>% 
+      filter(var == "GDP2") %>%
       filter(d1 == StateName()) %>% 
-      .[paste0(prefix_year(), Year())]/100
-    
-    round(c/r) %>% 
+      .[[paste0(prefix_year(), Year())]] %>% 
       comma() %>% 
       paste0("$", .) %>% 
       valueBox(paste0("GDP in ", StateName(), ", ", Year()), 
@@ -305,17 +294,10 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   })
   
   output$GDP_roa_vb <- renderValueBox({
-    c <- data1() %>% 
-      filter(v1 == "c", v2 == "GDP") %>%
-      filter(d2 == "ROA") %>% 
-      .[paste0(prefix_year(), Year())]
-    
-    r <- data1() %>% 
-      filter(v1 == "gdp", v2 == "r") %>%
+    data1() %>% 
+      filter(var == "GDP2") %>%
       filter(d1 == "ROA") %>% 
-      .[paste0(prefix_year(), Year())]/100
-    
-    round(c/r) %>% 
+      .[[paste0(prefix_year(), Year())]] %>% 
       comma() %>% 
       paste0("$", .) %>% 
       valueBox(paste0("GDP in ", "ROA", ", ", Year()), 
@@ -323,19 +305,12 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   })
   
   output$GDP_au_vb <- renderValueBox({
-    c <- data1() %>% 
-      filter(v1 == "c", v2 == "GDP") %>%
+    data1() %>% 
+      filter(var == "GDP2") %>%
       filter(d2 %in% c(RegName(),StateName(),"ROA")) %>% 
       select(matches(".*\\-[0-9]{4}")) %>% 
       map_df(sum) %>% 
-      .[paste0(prefix_year(), Year())]
-    
-    r <- data1() %>% 
-      filter(v1 == "gdp", v2 == "r") %>%
-      filter(d1 == "AUS") %>% 
-      .[paste0(prefix_year(), Year())]/100
-    
-    round(c/r) %>% 
+      .[[paste0(prefix_year(), Year())]] %>% 
       comma() %>% 
       paste0("$", .) %>% 
       valueBox(paste0("GDP in AU, ", Year()), 
@@ -343,26 +318,24 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   })
   
   output$dim_reg_vb <- renderValueBox({
-    valueBox(n_distinct(data1()$d3) - 3, "Regions", 
+    valueBox(n_distinct(data1()$d2), "Regions", 
              icon = icon("map"), color = "olive")
   })
   
   output$dim_commo_vb <- renderValueBox({
-    valueBox(n_distinct(data1()$d2) - n_distinct(data1()$d3) - 2, 
+    valueBox(n_distinct(data1()$d1) - n_distinct(data1()$d2), 
              "Commodities", 
              icon = icon("bar-chart"), color = "aqua")
   })
   
   output$dim_year_vb <- renderValueBox({
-    valueBox(ncol(data1()) - 6, "Years", 
+    valueBox(ncol(data1()) - 4, "Years", 
              icon = icon("line-chart"), color = "orange")
   })
   
   output$dim_var_vb <- renderValueBox({
     nvar <- data1() %>% 
-      mutate(group = ifelse(str_count(Solution, "_") == 0, 
-                            v1, paste(v1,v2, sep="_"))) %>% 
-      group_by(group) %>% 
+      group_by(var) %>% 
       nest() %>% 
       nrow() 
     
@@ -372,107 +345,108 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   
   #--------------------------GDP--------------------------------------
   output$GDP_bar <- renderPlotly({
-    data1() %>% 
-      filter(v1 == "c", v2 == "GDP") %>%
-      filter(d2 %in% c(RegName(),StateName(),"ROA")) %>% 
-      select(d2, matches(".*\\-[0-9]{4}")) %>% 
-      gather(year, value, -d2) %>%
-      mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
-      mutate(d2 = fct_relevel(d2, c(RegName(),StateName(),"ROA"))) %>% 
-      
-      filter(year >= start_year) %>% 
-      spread(d2, value) %>% 
-      
-      # plot_ly(type = "scatter", mode = "lines+markers") %>% 
-      plot_ly(type = "bar") %>% 
-      add_trace(x=~year, y=~ROA, name = "ROA", color = I(DC[1]), 
-                visible = "legendonly") %>% 
-      add_trace(x=~year, y=~get(RegName()), name = RegName(), 
-                color = I(DC[2]), visible = T) %>% 
-      add_trace(x=~year, y=~get(StateName()), name = StateName(), 
-                color = I(DC[3]), visible = T) %>% 
-      
-      layout(updatemenus = list(trade_bar_chart_types), 
-             # legend = list(x = 0.9, y = 1), 
-             bargap = 0.15, bargroupgap = 0.1, 
-             xaxis = list(title = "", dtick = 2),
-             yaxis = list(title = "c_GDP"))
-      
-      # ggplot(aes(x = year, y = value, fill = d2)) +
-      # geom_col(position = position_dodge()) +
-      # facet_wrap(~d2) +
-      # ggy(comma, "") +
-      # ggx(identity, "") +
-      # ggf() + 
-      # ggl("none")
-    
-    # ggplotly(g1, tooltip = c("year", "value")) %>% 
-    #   layout(margin = list(l = 60))
-  })
-  
-  output$GDP_g_bar <- renderPlotly({
-    g1 <- data1() %>% 
-      filter(v1 == "gdp", v2 == "r") %>% 
-      filter(d1 %in% c(RegName(),StateName(),"ROA", "NZ", "CHN", "IND")) %>% 
+    pp <- data1() %>% 
+      filter(var == "GDP2") %>%
+      filter(d1 %in% c(RegName(),StateName(),"ROA")) %>% 
       select(d1, matches(".*\\-[0-9]{4}")) %>% 
       gather(year, value, -d1) %>%
       mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
-      mutate(d1 = fct_relevel(d1, c(RegName(),StateName(),"ROA"))) %>% 
+      # mutate(d1 = fct_relevel(d1, c(RegName(),StateName(),"ROA"))) %>%
       
-      ggplot(aes(x = year, y = value/100, fill = d1, col = d1)) +
-      geom_line() + 
-      geom_point() + 
-      facet_wrap(~d1) +
-      ggy(percent, "") + 
-      ggx(identity, "") +
-      ggf() + 
-      ggc() + 
-      ggl("none")
+      group_by(d1) %>% 
+      mutate(growth = value/lag(value)-1) %>% 
+      
+      filter(year >= start_year) %>% 
+      spread(d1, value) %>% 
+      
+      plot_ly(type = "bar") %>% 
+      add_trace(x=~year, y=~get(StateName()), name = StateName(), 
+                color = I(DC[3]), visible = T) %>% 
+      layout(updatemenus = list(trade_bar_chart_types), 
+             # legend = list(x = 0.9, y = 1), 
+             xaxis = list(title = "", dtick = 2),
+             yaxis = list(title = "GDP"))
     
-    ggplotly(g1, tooltip = c("year", "value/100")) %>% 
-      layout(margin = list(l = 60))
+    if (RegName() != "") {
+      pp %>% 
+        add_trace(x=~year, y=~get(RegName()), name = RegName(), 
+                  color = I(DC[2]), visible = T) %>% 
+        add_trace(x=~year, y=~ROA, name = "ROA", color = I(DC[1]), 
+                  visible = "legendonly")
+    } else {
+      pp %>% 
+        add_trace(x=~year, y=~ROA, name = "ROA", color = I(DC[1]), 
+                  visible = T)
+    }
+  })
+  
+  output$GDP_g_bar <- renderPlotly({
+    pp <- data1() %>% 
+      filter(var == "GDP2") %>%
+      filter(d1 %in% c(RegName(),StateName(),"ROA")) %>% 
+      select(d1, matches(".*\\-[0-9]{4}")) %>% 
+      gather(year, value, -d1) %>%
+      mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+      # mutate(d1 = fct_relevel(d1, c(RegName(),StateName(),"ROA"))) %>%
+      
+      arrange(year) %>% 
+      group_by(d1) %>% 
+      mutate(value = value/lag(value)-1) %>% 
+      
+      filter(year >= start_year) %>% 
+      spread(d1, value) %>% 
+      
+      plot_ly(type = "bar") %>% 
+      add_trace(x=~year, y=~get(StateName()), name = StateName(), 
+                color = I(DC[3]), visible = T) %>% 
+      layout(updatemenus = list(trade_bar_chart_types), 
+             # legend = list(x = 0.9, y = 1), 
+             xaxis = list(title = "", dtick = 2),
+             yaxis = list(title = "GDP growth", tickformat = "%"))
+    
+    if (RegName() != "") {
+      pp %>% 
+        add_trace(x=~year, y=~get(RegName()), name = RegName(), 
+                  color = I(DC[2]), visible = T) %>% 
+        add_trace(x=~year, y=~ROA, name = "ROA", color = I(DC[1]), 
+                  visible = "legendonly")
+    } else {
+      pp %>% 
+        add_trace(x=~year, y=~ROA, name = "ROA", color = I(DC[1]), 
+                  visible = T)
+    }
   })
   
   #--------------------------GVA--------------------------------------
-  BAU_qva <- reactive({
+  GIND2 <- reactive({
     req(input$gvaRegName)
     
     data1() %>% 
-      filter(v1 == "qva") %>% 
+      filter(var == "GIND2") %>% 
       filter(d2 == input$gvaRegName) %>% 
       select(d1, matches(".*\\-[0-9]{4}")) %>% 
       gather(year, value, -d1) %>% 
       mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>% 
       mutate(d1 = fct_inorder(d1)) %>% 
-      rename(qva = value) %>% 
+      mutate(d1 = fct_rev(d1)) %>% 
       
-      filter(year >= start_year)
-  })
-  
-  BAU_qVAind <- reactive({
-    req(input$gvaRegName)
-    
-    data1() %>% 
-      filter(v1 == "c", v2 == "qVAind") %>% 
-      filter(d2 == input$gvaRegName) %>% 
-      select(d1, matches(".*\\-[0-9]{4}")) %>% 
-      gather(year, value, -d1) %>% 
-      mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>% 
-      mutate(d1 = fct_inorder(d1)) %>% 
-      rename(qVAind = value) %>% 
+      arrange(year) %>% 
+      group_by(d1) %>% 
+      mutate(growth = value/lag(value)-1) %>% 
       
-      filter(year >= start_year)
+      filter(year >= start_year) %>% 
+      ungroup()
   })
   
   output$qva_scat <- renderPlotly({
     
-    g1 <- inner_join(BAU_qva(), BAU_qVAind(), by = c("d1", "year")) %>% 
-      ggplot(aes(x=qVAind, y=qva/100, col=d1)) + 
+    g1 <- GIND2() %>% 
+      ggplot(aes(x=value, y=growth, col=d1)) + 
       geom_point(alpha = .1) + 
       geom_point(aes(frame = year, ids = d1)) +
       scale_color_manual(values = colorRampPalette(brewer.pal(8, "Set2"))(19)) + 
-      ggy(percent, "qva") + 
-      ggx(comma) +
+      ggy(percent, "Growth rate") + 
+      ggx(comma, "Growth value") +
       ggl("right")
     
     ggplotly(g1) %>% 
@@ -481,24 +455,23 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   })
   
   output$qva_bar <- renderPlotly({
-    BAU_qVAind() %>% 
-      plot_ly(x=~year, y=~qVAind, color=~d1, type = "bar") %>%
+    GIND2() %>%  
+      plot_ly(x=~year, y=~value, color=~d1, type = "bar") %>%
       layout(barmode = 'stack')
   })
   
   output$qva_bar_f <- renderPlotly({
-    BAU_qVAind() %>% 
+    GIND2() %>% 
       group_by(year) %>% 
-      mutate(qVAind = qVAind/sum(qVAind)) %>% 
+      mutate(value = value/sum(value)) %>% 
       
-      plot_ly(x=~year, y=~qVAind, color=~d1, type = "bar") %>%
+      plot_ly(x=~year, y=~value, color=~d1, type = "bar") %>%
       layout(barmode = 'stack', yaxis = list(tickformat = "%"), margin = list(l=60))
   })
   
   output$qva_bar_o <- renderPlotly({
-    dd <- BAU_qVAind() %>% 
-      left_join(BAU_qva(), by = c("year", "d1")) %>% 
-      mutate(d1 = fct_reorder(d1, qVAind, function(x) mean(x, na.rm=T)))
+    dd <- GIND2() %>% 
+      mutate(d1 = fct_reorder(d1, value, function(x) mean(x, na.rm=T))) %>% 
       # mutate(d1 = fct_relevel(d1, c("FF", "LSTK", "CROPS", 
       #                               "COG", "IRON", "DWE", 
       #                               "ISR", 
@@ -506,25 +479,26 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
       #                               "LMAN", "FMAN", "HMAN", 
       #                               "TRN", "CNS", 
       #                               "TRD", "OFI", "OBS", "OSG")))
+      filter(year > min(year))
     
     p1 <- dd %>% 
       mutate(zeros = 0) %>% 
-      select(-qva) %>% 
+      select(-growth) %>% 
       gather(key, value, -d1, -year) %>% 
       plot_ly(y=~d1, x=~value, color=~d1, frame=~year, 
               type = "scatter", mode = "lines+markers", 
               line = list(dash = 'dot'), 
               showlegend = F) %>%
-      layout(margin = list(l=60), 
+      layout(margin = list(l=60, t=40), 
              yaxis = list(title = "",
                           showgrid = F, showline = F, showticklabels = T),
-             xaxis = list(title = "qVAind", 
+             xaxis = list(title = "Growth value", 
                           side = 'top', showline = T, 
-                          range = c(min(0, min(dd$qVAind)-100), max(dd$qVAind)+100)))
+                          range = c(min(0, min(dd$value)-100), max(dd$value)+100)))
     
     p2 <- dd %>% 
       arrange(d1) %>% 
-      plot_ly(x=~qva, y=~as.numeric(d1)-1, #Note: plotly convert factor start from 0
+      plot_ly(x=~growth, y=~as.numeric(d1)-1, #Note: plotly convert factor start from 0
               frame=~year,  text=~d1, 
               type = "scatter", mode = "lines+markers", 
               line = list(color = DC[1]), showlegend = F) %>%
@@ -532,9 +506,9 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
              yaxis = list(title = "", zeroline = F, 
                           # ticktext = levels(dd$d1), 
                           showgrid = F, showline = T, showticklabels = F), 
-             xaxis = list(title = "qva", zeroline = F, 
+             xaxis = list(title = "Growth rate", zeroline = F, 
                           showline = T, side = 'top', tickprefix = '%', 
-                          range = c(min(0, min(dd$qva)-.01), max(dd$qva)+.01)))
+                          range = c(min(0, min(dd$growth)-.01), max(dd$growth)+.01)))
     
     subplot(p1, p2, titleX = T, shareY = F, shareX = F) %>% 
       animation_opts(500, redraw = F)
@@ -542,22 +516,25 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   
   output$qva_all <- renderPlotly({
     g1 <- data1() %>% 
-      # filter(v1 == "c", v2 == "qVAind") %>% 
-      filter(v1 == "qva") %>% 
+      filter(var == "GIND2") %>% 
       filter(d2 %in% c(RegName(), StateName(), "ROA")) %>% 
       select(d1, d2, matches(".*\\-[0-9]{4}")) %>% 
-      gather(year, qva, -d1, -d2) %>% 
+      gather(year, value, -d1, -d2) %>% 
       mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>% 
       mutate(d2 = fct_relevel(d2, c(RegName(),StateName(),"ROA"))) %>% 
       
+      group_by(d1, d2) %>% 
+      arrange(year) %>% 
+      mutate(growth = value/lag(value) - 1) %>% 
+      
       filter(year >= start_year) %>%
       
-      ggplot(aes(x= year, y=qva/100, group=d1)) + 
+      ggplot(aes(x= year, y=growth, group=d1)) + 
       geom_line(alpha=.1) + 
       geom_line(aes(frame=as.character(d1)), col=DC[1]) + 
       facet_wrap(~d2) + 
-      xlab("") + 
-      ggy(percent, "qva") + 
+      ggx(comma, "") + 
+      ggy(percent, "Growth rate") + 
       ggl("none")
     
     ggplotly(g1) %>% 
@@ -567,22 +544,21 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   
   output$qVAind_all <- renderPlotly({
     g1 <- data1() %>% 
-      filter(v1 == "c", v2 == "qVAind") %>%
-      # filter(v1 == "qva") %>% 
+      filter(var == "GIND2") %>% 
       filter(d2 %in% c(RegName(), StateName(), "ROA")) %>% 
       select(d1, d2, matches(".*\\-[0-9]{4}")) %>% 
-      gather(year, qVAind, -d1, -d2) %>% 
+      gather(year, value, -d1, -d2) %>% 
       mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>% 
       mutate(d2 = fct_relevel(d2, c(RegName(),StateName(),"ROA"))) %>% 
       
       filter(year >= start_year) %>%
       
-      ggplot(aes(x= year, y=qVAind, group=d1)) + 
+      ggplot(aes(x= year, y=value, group=d1)) + 
       geom_line(alpha=.1) + 
       geom_line(aes(frame=as.character(d1)), col=DC[2]) + 
       facet_wrap(~d2) + 
-      xlab("") + 
-      ggy(comma, "qVAind") + 
+      ggx(comma, "") + 
+      ggy(comma, "Growth value") + 
       ggl("none")
     
     ggplotly(g1) %>% 
@@ -592,35 +568,83 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
   
   #--------------------------FTE--------------------------------------
   output$FTE_bar <- renderPlotly({
-    g1 <- data1() %>% 
-      filter(v1 == "empl") %>% 
-      filter(d1 %in% c(RegName(), StateName(), "ROA", "NZ", "CHN", "IND")) %>% 
+    pp <- data1() %>% 
+      filter(var == "EMP2") %>%
+      filter(d1 %in% c(RegName(),StateName(),"ROA")) %>% 
       select(d1, matches(".*\\-[0-9]{4}")) %>% 
       gather(year, value, -d1) %>%
       mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
-      mutate(d1 = fct_relevel(d1, c(RegName(),StateName(),"ROA"))) %>% 
+      # mutate(d1 = fct_relevel(d1, c(RegName(),StateName(),"ROA"))) %>%
       
-      ggplot(aes(x = year, y = value/100, fill = d1, col = d1)) +
-      # geom_col(position = position_dodge()) +
-      geom_line() + 
-      geom_point() + 
-      facet_wrap(~d1) +
-      ggy(percent, "") +
-      ggx(identity, "") +
-      ggc() + 
-      ggf() + 
-      ggl("none")
+      group_by(d1) %>% 
+      mutate(growth = value/lag(value)-1) %>% 
+      
+      filter(year >= start_year) %>% 
+      spread(d1, value) %>% 
+      
+      plot_ly(type = "bar") %>% 
+      add_trace(x=~year, y=~get(StateName()), name = StateName(), 
+                color = I(DC[3]), visible = T) %>% 
+      layout(updatemenus = list(trade_bar_chart_types), 
+             # legend = list(x = 0.9, y = 1), 
+             xaxis = list(title = "", dtick = 2),
+             yaxis = list(title = "FTE"))
     
-    ggplotly(g1, tooltip = c("year", "value/100")) %>% 
-      layout(margin = list(l = 60))
+    if (RegName() != "") {
+      pp %>% 
+        add_trace(x=~year, y=~get(RegName()), name = RegName(), 
+                  color = I(DC[2]), visible = T) %>% 
+        add_trace(x=~year, y=~ROA, name = "ROA", color = I(DC[1]), 
+                  visible = "legendonly")
+    } else {
+      pp %>% 
+        add_trace(x=~year, y=~ROA, name = "ROA", color = I(DC[1]), 
+                  visible = T)
+    }
+  })
+  
+  output$FTE_g_bar <- renderPlotly({
+    pp <- data1() %>% 
+      filter(var == "EMP2") %>%
+      filter(d1 %in% c(RegName(),StateName(),"ROA")) %>% 
+      select(d1, matches(".*\\-[0-9]{4}")) %>% 
+      gather(year, value, -d1) %>%
+      mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+      # mutate(d1 = fct_relevel(d1, c(RegName(),StateName(),"ROA"))) %>%
+      
+      arrange(year) %>% 
+      group_by(d1) %>% 
+      mutate(value = value/lag(value)-1) %>% 
+      
+      filter(year >= start_year) %>% 
+      spread(d1, value) %>% 
+      
+      plot_ly(type = "bar") %>% 
+      add_trace(x=~year, y=~get(StateName()), name = StateName(), 
+                color = I(DC[3]), visible = T) %>% 
+      layout(updatemenus = list(trade_bar_chart_types), 
+             # legend = list(x = 0.9, y = 1), 
+             xaxis = list(title = "", dtick = 2),
+             yaxis = list(title = "FTE growth", tickformat = "%"))
     
+    if (RegName() != "") {
+      pp %>% 
+        add_trace(x=~year, y=~get(RegName()), name = RegName(), 
+                  color = I(DC[2]), visible = T) %>% 
+        add_trace(x=~year, y=~ROA, name = "ROA", color = I(DC[1]), 
+                  visible = "legendonly")
+    } else {
+      pp %>% 
+        add_trace(x=~year, y=~ROA, name = "ROA", color = I(DC[1]), 
+                  visible = T)
+    }
   })
   
   #--------------------------Trade--------------------------------------
   output$qex_ind_bar <- renderPlotly({
-    data1() %>% 
-      filter(v1 == "qex") %>% 
-      select(-Solution, -v1, -v2, -d3) %>%
+    pp <- data1() %>% 
+      filter(var == "EXPORTS1") %>% 
+      select(-Solution, -var, -d3) %>%
       mutate(d1 = fct_inorder(d1)) %>% 
       gather(year, value, -d1, -d2) %>% 
       mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>% 
@@ -631,30 +655,38 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
       
       # plot_ly(type = "scatter", mode = "lines+markers") %>% 
       plot_ly(type = "bar") %>% 
-      add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]), 
-              visible = "legendonly") %>% 
-      add_trace(x=~year, y=~get(RegName()), frame = ~d1, name = RegName(), 
-                color = I(DC[2]), visible = T) %>% 
       add_trace(x=~year, y=~get(StateName()), frame = ~d1, name = StateName(), 
                 color = I(DC[3]), visible = T) %>% 
       
       layout(updatemenus = list(trade_bar_chart_types), 
              # legend = list(x = 0.9, y = 1), 
-             bargap = 0.15, bargroupgap = 0.1, 
              xaxis = list(title = "", dtick = 2),
-             yaxis = list(title = "qex")) %>% 
-      
-      animation_slider(
-        currentvalue = list(prefix = "Commodity ", font = list(color="red"))
-      )
+             yaxis = list(title = "Exports"))
     
+    if (RegName() == "") {
+      pp %>% 
+        add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]), 
+                  visible = T) %>% 
+        animation_slider(
+          currentvalue = list(prefix = "Commodity ", font = list(color="red"))
+        )
+    } else {
+      pp %>% 
+        add_trace(x=~year, y=~get(RegName()), frame = ~d1, name = RegName(), 
+                  color = I(DC[2]), visible = T) %>%
+        add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]), 
+                  visible = "legendonly") %>% 
+        animation_slider(
+          currentvalue = list(prefix = "Commodity ", font = list(color="red"))
+        )
+    }
   })
   
   output$qimp_ind_bar <- renderPlotly({
     
-    data1() %>% 
-      filter(v1 == "qimp") %>% 
-      select(-Solution, -v1, -v2, -d3) %>%
+    pp <- data1() %>% 
+      filter(var == "IMPORTS1") %>% 
+      select(-Solution, -var, -d3) %>%
       mutate(d1 = fct_inorder(d1)) %>% 
       gather(year, value, -d1, -d2) %>% 
       mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>% 
@@ -665,22 +697,31 @@ analysis <- function(input, output, session, Year, RegName, StateName, Tab) {
       
       # plot_ly(type = "scatter", mode = "lines+markers") %>% 
       plot_ly(type = "bar") %>% 
-      add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]), 
-              visible = "legendonly") %>% 
-      add_trace(x=~year, y=~get(RegName()), frame = ~d1, name = RegName(), 
-                color = I(DC[2]), visible = T) %>% 
       add_trace(x=~year, y=~get(StateName()), frame = ~d1, name = StateName(), 
                 color = I(DC[3]), visible = T) %>% 
       
       layout(updatemenus = list(trade_bar_chart_types), 
              # legend = list(x = 0.9, y = 1), 
-             bargap = 0.15, bargroupgap = 0.1, 
              xaxis = list(title = "", dtick = 2),
-             yaxis = list(title = "qimp")) %>% 
-      
-      animation_slider(
-        currentvalue = list(prefix = "Commodity ", font = list(color="red"))
-      )
+             yaxis = list(title = "Imports"))
+    
+    if (RegName() == "") {
+      pp %>% 
+        add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]), 
+                  visible = T) %>% 
+        animation_slider(
+          currentvalue = list(prefix = "Commodity ", font = list(color="red"))
+        )
+    } else {
+      pp %>% 
+        add_trace(x=~year, y=~get(RegName()), frame = ~d1, name = RegName(), 
+                  color = I(DC[2]), visible = T) %>%
+        add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]), 
+                  visible = "legendonly") %>% 
+        animation_slider(
+          currentvalue = list(prefix = "Commodity ", font = list(color="red"))
+        )
+    }
   })
 }
 

@@ -9,7 +9,7 @@
 dashboardPage(
   #skin = "green",
   #--------------------Header---------------------------
-  dashboardHeader(title = "TidyCGE v0.3 alpha"),
+  dashboardHeader(title = "TidyCGE v1.0 alpha"),
   #--------------------Sidebar---------------------------
   dashboardSidebar(
     # tags$head(
@@ -18,11 +18,11 @@ dashboardPage(
     sidebarMenu(
       id = "sbm",
       div(align = "center",
-          h5("Tony Liu, Jan 2018")),
+          h5("Tony Liu, Mar 2018")),
       
-      numericInput("Year", "Year", value = 2017), 
-      textInput("RegName", "Shock Region", value = "SYD"),
-      textInput("StateName", "Shock State", value = "RON"),
+      numericInput("Year", "Year", value = 2012), 
+      textInput("RegName", "Shock Region", value = ""),
+      textInput("StateName", "Shock State", value = "NSW"),
       
       menuItem("BAU", tabName = "BAU", icon = icon("database")),
       menuItem("LGA", tabName = "LGA", icon = icon("map-marker")), 
