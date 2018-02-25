@@ -119,8 +119,8 @@ analysisUI <- function(id) {
               tabsetPanel(
                 tabPanel("Ordered bar", plotlyOutput(ns("qva_bar_o"), height = 600) %>% withSpinner(type=1, color = DC[2])), 
                 tabPanel("Scatter", plotlyOutput(ns("qva_scat"), height = 600) %>% withSpinner(type=1, color = DC[2])), 
-                tabPanel("qva_All", plotlyOutput(ns("qva_all"), height = 450) %>% withSpinner(type=1, color = DC[2])), 
-                tabPanel("qVAind_All", plotlyOutput(ns("qVAind_all"), height = 450) %>% withSpinner(type=1, color = DC[2])), 
+                tabPanel("growth rate", plotlyOutput(ns("qva_all"), height = 450) %>% withSpinner(type=1, color = DC[2])), 
+                tabPanel("growth value", plotlyOutput(ns("qVAind_all"), height = 450) %>% withSpinner(type=1, color = DC[2])), 
                 tabPanel("Stacked bar", plotlyOutput(ns("qva_bar"), height = 600) %>% withSpinner(type=1, color = DC[2])), 
                 tabPanel("Filled bar", plotlyOutput(ns("qva_bar_f"), height = 600) %>% withSpinner(type=1, color = DC[2]))
               )
