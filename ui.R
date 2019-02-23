@@ -1,7 +1,7 @@
 # TidyCGE
 # Exploring the CGE results in a tidy data format
 # Tony Liu
-# Date: Mar, 2018
+# Date: Jan, 2018
 
 # ui.R
 # modularised
