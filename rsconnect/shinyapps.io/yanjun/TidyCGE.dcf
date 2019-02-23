@@ -1,0 +1,13 @@
+name: TidyCGE
+title: TidyCGE
+username:
+account: yanjun
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 253610
+bundleId: 1161487
+url: https://yanjun.shinyapps.io/TidyCGE/
+when: 1515066232.1012
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Split_Weights.xlsm

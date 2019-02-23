@@ -1,0 +1,512 @@
+visible = "legendonly") %>%
+add_trace(x=~year, y=~SYD, frame = ~d1, name = "SYD", color = I(DC[2]), visible = T) %>%
+add_trace(x=~year, y=~RON, frame = ~d1, name = "RON", color = I(DC[3]), visible = T) %>%
+# add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), visible = "legendonly") %>%
+layout(updatemenus = list(trade_bar_chart_types),
+xaxis = list(title = "", dtick = 1),
+yaxis = list(title = "Aggregated export")) %>%
+animation_opts(1000, easing = "elastic", redraw = T) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="black"))
+)
+data1 %>%
+filter(v1 == "qex") %>%
+select(-Solution, -v1, -v2, -d3) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+filter(year >= start_year) %>%
+filter(d2 %in% c("SYD", "RON", "ROA")) %>%
+spread(d2, value) %>%
+# plot_ly(type = "scatter", mode = "markers+lines") %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]),
+visible = "legendonly") %>%
+add_trace(x=~year, y=~SYD, frame = ~d1, name = "SYD", color = I(DC[2]), visible = T) %>%
+add_trace(x=~year, y=~RON, frame = ~d1, name = "RON", color = I(DC[3]), visible = T) %>%
+# add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), visible = "legendonly") %>%
+layout(updatemenus = list(trade_bar_chart_types),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "Aggregated export")) %>%
+animation_opts(1000, easing = "elastic", redraw = T) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="black"))
+)
+runApp('~/Google Drive/shinyapp/CGE dashboard/TidyCGE')
+?animation_slider
+source('~/Google Drive/shinyapp/CGE dashboard/TidyCGE/analysis module.R', echo=TRUE)
+runApp('~/Google Drive/shinyapp/CGE dashboard/TidyCGE')
+runApp('~/Google Drive/shinyapp/CGE dashboard/TidyCGE')
+data1 %>%
+filter(v1 == "qex") %>%
+select(-Solution, -v1, -v2, -d3) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+filter(year >= start_year) %>%
+filter(d2 %in% c("SYD", "RON", "ROA")) %>%
+spread(d2, value) %>%
+# plot_ly(type = "scatter", mode = "markers+lines") %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]),
+visible = "legendonly") %>%
+add_trace(x=~year, y=~SYD, frame = ~d1, name = "SYD", color = I(DC[2]), visible = T) %>%
+add_trace(x=~year, y=~RON, frame = ~d1, name = "RON", color = I(DC[3]), visible = T) %>%
+# add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), visible = "legendonly") %>%
+layout(updatemenus = list(trade_bar_chart_types),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "Aggregated export")) %>%
+animation_opts(1000, easing = "elastic", redraw = T) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="black"))
+)
+data1 %>%
+filter(v1 == "qex") %>%
+select(-Solution, -v1, -v2, -d3) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+filter(year >= start_year) %>%
+filter(d2 %in% c("SYD", "RON", "ROA")) %>%
+spread(d2, value) %>%
+# plot_ly(type = "scatter", mode = "markers+lines") %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]),
+visible = "legendonly") %>%
+add_trace(x=~year, y=~SYD, frame = ~d1, name = "SYD", color = I(DC[2]), visible = T) %>%
+add_trace(x=~year, y=~RON, frame = ~d1, name = "RON", color = I(DC[3]), visible = T) %>%
+# add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), visible = "legendonly") %>%
+layout(updatemenus = list(trade_bar_chart_types),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "Aggregated export")) %>%
+# animation_opts(1000, easing = "elastic", redraw = T) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="black"))
+)
+data1 %>%
+filter(v1 == "qex") %>%
+select(-Solution, -v1, -v2, -d3) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+filter(year >= start_year) %>%
+filter(d2 %in% c("SYD", "RON", "ROA")) %>%
+spread(d2, value) %>%
+# plot_ly(type = "scatter", mode = "markers+lines") %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]),
+visible = "legendonly") %>%
+add_trace(x=~year, y=~SYD, frame = ~d1, name = "SYD", color = I(DC[2]), visible = T) %>%
+add_trace(x=~year, y=~RON, frame = ~d1, name = "RON", color = I(DC[3]), visible = T) %>%
+# add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), visible = "legendonly") %>%
+layout(updatemenus = list(trade_bar_chart_types),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "Aggregated export")) %>%
+animation_opts(1000, easing = "elastic", redraw = T) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="black"))
+)
+data1 %>%
+filter(v1 == "qex") %>%
+select(-Solution, -v1, -v2, -d3) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+filter(year >= start_year) %>%
+filter(d2 %in% c("SYD", "RON", "ROA")) %>%
+spread(d2, value) %>%
+# plot_ly(type = "scatter", mode = "markers+lines") %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]),
+visible = "legendonly") %>%
+add_trace(x=~year, y=~SYD, frame = ~d1, name = "SYD", color = I(DC[2]), visible = T) %>%
+add_trace(x=~year, y=~RON, frame = ~d1, name = "RON", color = I(DC[3]), visible = T) %>%
+# add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), visible = "legendonly") %>%
+layout(updatemenus = list(trade_bar_chart_types),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "Aggregated export")) %>%
+animation_opts(1000, easing = "elastic", redraw = T) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="black")),
+tickangle = 90,
+)
+data1 %>%
+filter(v1 == "qex") %>%
+select(-Solution, -v1, -v2, -d3) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+filter(year >= start_year) %>%
+filter(d2 %in% c("SYD", "RON", "ROA")) %>%
+spread(d2, value) %>%
+# plot_ly(type = "scatter", mode = "markers+lines") %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]),
+visible = "legendonly") %>%
+add_trace(x=~year, y=~SYD, frame = ~d1, name = "SYD", color = I(DC[2]), visible = T) %>%
+add_trace(x=~year, y=~RON, frame = ~d1, name = "RON", color = I(DC[3]), visible = T) %>%
+# add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), visible = "legendonly") %>%
+layout(updatemenus = list(trade_bar_chart_types),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "Aggregated export")) %>%
+animation_opts(1000, easing = "elastic", redraw = T) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="black")),
+tickangle = 90
+)
+data1 %>%
+filter(v1 == "qex") %>%
+select(-Solution, -v1, -v2, -d3) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+filter(year >= start_year) %>%
+filter(d2 %in% c("SYD", "RON", "ROA")) %>%
+spread(d2, value) %>%
+# plot_ly(type = "scatter", mode = "markers+lines") %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]),
+visible = "legendonly") %>%
+add_trace(x=~year, y=~SYD, frame = ~d1, name = "SYD", color = I(DC[2]), visible = T) %>%
+add_trace(x=~year, y=~RON, frame = ~d1, name = "RON", color = I(DC[3]), visible = T) %>%
+# add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), visible = "legendonly") %>%
+layout(updatemenus = list(trade_bar_chart_types),
+legend = list(x = 0.9, y = 0.9),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "Aggregated export")) %>%
+animation_opts(1000, easing = "elastic", redraw = T) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="black"))
+)
+data1 %>%
+filter(v1 == "qex") %>%
+select(-Solution, -v1, -v2, -d3) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+filter(year >= start_year) %>%
+filter(d2 %in% c("SYD", "RON", "ROA")) %>%
+spread(d2, value) %>%
+# plot_ly(type = "scatter", mode = "markers+lines") %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]),
+visible = "legendonly") %>%
+add_trace(x=~year, y=~SYD, frame = ~d1, name = "SYD", color = I(DC[2]), visible = T) %>%
+add_trace(x=~year, y=~RON, frame = ~d1, name = "RON", color = I(DC[3]), visible = T) %>%
+# add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), visible = "legendonly") %>%
+layout(updatemenus = list(trade_bar_chart_types),
+legend = list(x = 0.9, y = 0.95),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "Aggregated export")) %>%
+animation_opts(1000, easing = "elastic", redraw = T) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="black"))
+)
+data1 %>%
+filter(v1 == "qex") %>%
+select(-Solution, -v1, -v2, -d3) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+filter(year >= start_year) %>%
+filter(d2 %in% c("SYD", "RON", "ROA")) %>%
+spread(d2, value) %>%
+# plot_ly(type = "scatter", mode = "markers+lines") %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]),
+visible = "legendonly") %>%
+add_trace(x=~year, y=~SYD, frame = ~d1, name = "SYD", color = I(DC[2]), visible = T) %>%
+add_trace(x=~year, y=~RON, frame = ~d1, name = "RON", color = I(DC[3]), visible = T) %>%
+# add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), visible = "legendonly") %>%
+layout(updatemenus = list(trade_bar_chart_types),
+legend = list(x = 0.95, y = 1),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "Aggregated export")) %>%
+animation_opts(1000, easing = "elastic", redraw = T) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="black"))
+)
+data1 %>%
+filter(v1 == "qex") %>%
+select(-Solution, -v1, -v2, -d3) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+filter(year >= start_year) %>%
+filter(d2 %in% c("SYD", "RON", "ROA")) %>%
+spread(d2, value) %>%
+# plot_ly(type = "scatter", mode = "markers+lines") %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]),
+visible = "legendonly") %>%
+add_trace(x=~year, y=~SYD, frame = ~d1, name = "SYD", color = I(DC[2]), visible = T) %>%
+add_trace(x=~year, y=~RON, frame = ~d1, name = "RON", color = I(DC[3]), visible = T) %>%
+# add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), visible = "legendonly") %>%
+layout(updatemenus = list(trade_bar_chart_types),
+legend = list(x = 0.9, y = 1),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "Aggregated export")) %>%
+animation_opts(1000, easing = "elastic", redraw = T) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="black"))
+)
+runApp('~/Google Drive/shinyapp/CGE dashboard/TidyCGE')
+runApp('~/Google Drive/shinyapp/CGE dashboard/TidyCGE')
+shiny::runApp()
+install.packages("ggvis")
+install.packages("googleVis")
+shiny::runApp()
+runApp()
+runApp()
+shiny::runApp()
+runApp()
+runApp()
+runApp()
+?filter_at
+setwd("C:/Users/Tony/Google Drive/shinyapp/CGE dashboard/TidyCGE_v0.2")
+# setwd("~/Google Drive/shinyapp/CGE dashboard/TidyCGE_v0.2")
+source("TL gogogo.R")
+?filter_at
+data1 <- read_csv("BAUB-ssy copy.csv") %>%
+select(Solution, matches(".*\\-[0-9]{4}")) %>%
+separate(Solution, into = c("v1","v2","d1", "d2", "d3"), remove = F) %>%
+mutate(d3 = ifelse(str_count(Solution, "_") == 0, d2, d3)) %>%
+mutate(d2 = ifelse(str_count(Solution, "_") == 0, d1, d2)) %>%
+mutate(d1 = ifelse(str_count(Solution, "_") == 0, v2, d1)) %>%
+mutate(v2 = ifelse(str_count(Solution, "_") == 0, NA, v2))
+trade_bar_chart_types <- list(
+type = "buttons",
+direction = "left",
+xanchor = 'center',
+yanchor = "top",
+pad = list('r'= 0, 't'= 10, 'b' = 10),
+x = 0,
+y = 1.3,
+buttons = list(
+list(method = "restyle",
+args = list("type", "bar"),
+label = "Bar"),
+list(method = "restyle",
+args = list("type", "scatter"),
+# args = list(list("type", "scatter"), list("mode", "lines+markers")),
+label = "Line")
+))
+data1 %>%
+filter(v1 == "qex") %>%
+select(-Solution, -v1, -v2, -d3) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+filter(year >= start_year) %>%
+filter(d2 %in% c("SYD", "RON", "ROA")) %>%
+spread(d2, value) %>%
+# plot_ly(type = "scatter", mode = "markers+lines") %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]),
+visible = "legendonly") %>%
+add_trace(x=~year, y=~SYD, frame = ~d1, name = "SYD", color = I(DC[2]), visible = T) %>%
+add_trace(x=~year, y=~RON, frame = ~d1, name = "RON", color = I(DC[3]), visible = T) %>%
+# add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), visible = "legendonly") %>%
+layout(updatemenus = list(trade_bar_chart_types),
+legend = list(x = 0.9, y = 1),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "Aggregated export")) %>%
+animation_opts(1000, easing = "elastic", redraw = T) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="black"))
+)
+start_year <- 2016
+trade_bar_chart_types <- list(
+type = "buttons",
+direction = "left",
+xanchor = 'center',
+yanchor = "top",
+pad = list('r'= 0, 't'= 10, 'b' = 10),
+x = 0,
+y = 1.3,
+buttons = list(
+list(method = "restyle",
+args = list("type", "bar"),
+label = "Bar"),
+list(method = "restyle",
+args = list("type", "scatter"),
+# args = list(list("type", "scatter"), list("mode", "lines+markers")),
+label = "Line")
+))
+data1 %>%
+filter(v1 == "qex") %>%
+select(-Solution, -v1, -v2, -d3) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+filter(year >= start_year) %>%
+filter(d2 %in% c("SYD", "RON", "ROA")) %>%
+spread(d2, value) %>%
+# plot_ly(type = "scatter", mode = "markers+lines") %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]),
+visible = "legendonly") %>%
+add_trace(x=~year, y=~SYD, frame = ~d1, name = "SYD", color = I(DC[2]), visible = T) %>%
+add_trace(x=~year, y=~RON, frame = ~d1, name = "RON", color = I(DC[3]), visible = T) %>%
+# add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), visible = "legendonly") %>%
+layout(updatemenus = list(trade_bar_chart_types),
+legend = list(x = 0.9, y = 1),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "Aggregated export")) %>%
+animation_opts(1000, easing = "elastic", redraw = T) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="black"))
+)
+library(plotly)
+trade_bar_chart_types <- list(
+type = "buttons",
+direction = "left",
+xanchor = 'center',
+yanchor = "top",
+pad = list('r'= 0, 't'= 10, 'b' = 10),
+x = 0,
+y = 1.3,
+buttons = list(
+list(method = "restyle",
+args = list("type", "bar"),
+label = "Bar"),
+list(method = "restyle",
+args = list("type", "scatter"),
+# args = list(list("type", "scatter"), list("mode", "lines+markers")),
+label = "Line")
+))
+data1 %>%
+filter(v1 == "qex") %>%
+select(-Solution, -v1, -v2, -d3) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+filter(year >= start_year) %>%
+filter(d2 %in% c("SYD", "RON", "ROA")) %>%
+spread(d2, value) %>%
+# plot_ly(type = "scatter", mode = "markers+lines") %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]),
+visible = "legendonly") %>%
+add_trace(x=~year, y=~SYD, frame = ~d1, name = "SYD", color = I(DC[2]), visible = T) %>%
+add_trace(x=~year, y=~RON, frame = ~d1, name = "RON", color = I(DC[3]), visible = T) %>%
+# add_trace(x=~d1, y=~ROA, frame = ~year, name = "ROA", color = I(DC[1]), visible = "legendonly") %>%
+layout(updatemenus = list(trade_bar_chart_types),
+legend = list(x = 0.9, y = 1),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "Aggregated export")) %>%
+animation_opts(1000, easing = "elastic", redraw = T) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="black"))
+)
+source('C:/Users/Tony/Google Drive/shinyapp/CGE dashboard/TidyCGE/scribble.R', echo=TRUE)
+shiny::runApp('C:/Users/Tony/Google Drive/shinyapp/CGE dashboard/TidyCGE')
+runApp('C:/Users/Tony/Google Drive/shinyapp/CGE dashboard/TidyCGE')
+runApp('C:/Users/Tony/Google Drive/shinyapp/CGE dashboard/TidyCGE')
+runApp('C:/Users/Tony/Google Drive/shinyapp/CGE dashboard/TidyCGE')
+shiny::runApp()
+runApp()
+setwd("C:/Users/Tony/Google Drive/shinyapp/CGE dashboard/TidyCGE_v0.2")
+# setwd("~/Google Drive/shinyapp/CGE dashboard/TidyCGE_v0.2")
+source("TL gogogo.R")
+data1 <- read_csv("BAUB-ssy copy.csv")
+glimpse(data1)
+names(dd)[1]
+names(data1)[1]
+data1 <- read_csv("BAUB-ssy copy.csv") %>%
+select(Solution, matches(".*\\-[0-9]{4}")) %>%
+separate(Solution, into = c("v1","v2","d1", "d2", "d3"), remove = F) %>%
+mutate(d3 = ifelse(str_count(Solution, "_") == 0, d2, d3)) %>%
+mutate(d2 = ifelse(str_count(Solution, "_") == 0, d1, d2)) %>%
+mutate(d1 = ifelse(str_count(Solution, "_") == 0, v2, d1)) %>%
+mutate(v2 = ifelse(str_count(Solution, "_") == 0, NA, v2))
+glimpse(data1)
+runApp('C:/Users/Tony/Google Drive/shinyapp/CGE dashboard/TidyCGE')
+runApp('C:/Users/Tony/Google Drive/shinyapp/CGE dashboard/TidyCGE')
+runApp('C:/Users/Tony/Google Drive/shinyapp/CGE dashboard/TidyCGE')
+shiny::runApp()
+runApp()
+runApp()
+?withSpinner
+runApp()
+runApp()
+shiny::runApp()
+runApp()
+runApp()
+runApp()
+shiny::runApp()
+runApp()
+shiny::runApp()
+source("TL gogogo.R")
+library(shiny)
+library(shinydashboard)
+library(shinycssloaders)
+library(shinyjs)
+library(plotly)
+options(shiny.maxRequestSize=30*1024^2,
+scipen=999, expressions=50000,
+DT.options = list(pageLength = 15,
+scrollX = TRUE,
+dom = 'Bfrtip',
+rowReorder = TRUE,
+buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+autoWidth = TRUE))
+start_year <- 2012
+dd <- read_csv("BAUB-ssy simple.csv", col_types = "cdddddddddddddddddddddddddddddddddddddddd")
+glimpse(dd)
+names(dd)[1] <- "Solution"
+dd %>%
+select(Solution, matches(".*\\-[0-9]{4}"))
+dd %>%
+select(Solution, matches(".*\\-[0-9]{4}")) %>%
+separate(Solution, into = c("v1","v2","d1", "d2", "d3"), remove = F)
+dd %>%
+select(Solution, matches(".*\\-[0-9]{4}")) %>%
+separate(Solution, into = c("var","d1", "d2", "d3"), remove = F) %>%
+dd %>%
+select(Solution, matches(".*\\-[0-9]{4}")) %>%
+separate(Solution, into = c("var","d1", "d2", "d3"), remove = F)
+dd <- dd %>%
+select(Solution, matches(".*\\-[0-9]{4}")) %>%
+separate(Solution, into = c("var","d1", "d2", "d3"), remove = F)
+dd
+dd %>%
+group_by(var) %>%
+nest() %>%
+print(n = 100)
+dd %>%
+filter(var == "GDP2") %>%
+filter(d1 == "NSW") %>%
+.[paste0(baub-, 2016)]
+dd %>%
+filter(var == "GDP2") %>%
+filter(d1 == "NSW") %>%
+.[paste0("baub-", "2016")]
+n_distinct(dd$d3)
+n_distinct(dd$d2)
+n_distinct(dd$d1) - n_distinct(dd$d2)
+glimpse(dd)
+dd %>%
+group_by(var) %>%
+nest() %>%
+nrow()
+runApp()
+runApp()
+dd %>%
+filter(var == "GDP2") %>%
+filter(d1 == "NSW") %>%
+.["baub-2012"] %>%
+comma() %>%
+paste0("$", .)
+dd %>%
+filter(var == "GDP2") %>%
+filter(d1 == "NSW") %>%
+.["baub-2012"]
+dd %>%
+filter(var == "GDP2") %>%
+filter(d1 == "NSW") %>%
+.[["baub-2012"]] %>%
+comma() %>%
+paste0("$", .)
+runApp()
+shiny::runApp()

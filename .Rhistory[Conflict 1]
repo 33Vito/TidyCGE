@@ -1,0 +1,512 @@
+mutate(zeros = 0) %>%
+select(-growth) %>%
+gather(key, value, -d1, -year) %>%
+plot_ly(y=~d1, x=~value, color=~d1, frame=~year,
+type = "scatter", mode = "lines+markers",
+line = list(dash = 'dot'),
+showlegend = F) %>%
+layout(margin = list(l=60, t=40),
+yaxis = list(title = "",
+showgrid = F, showline = F, showticklabels = T),
+xaxis = list(title = "Growth value",
+side = 'top', showline = T,
+range = c(min(0, min(dd$value)-100), max(dd$value)+100)))
+p2 <- dd %>%
+arrange(d1) %>%
+filter(year > min(year)) %>%
+plot_ly(x=~growth, y=~as.numeric(d1)-1, #Note: plotly convert factor start from 0
+frame=~year,  text=~d1,
+type = "scatter", mode = "lines+markers",
+line = list(color = DC[1]), showlegend = F) %>%
+layout(margin = list(l=60, t=40),
+yaxis = list(title = "", zeroline = F,
+# ticktext = levels(dd$d1),
+showgrid = F, showline = T, showticklabels = F),
+xaxis = list(title = "Growth rate", zeroline = F,
+showline = T, side = 'top', tickprefix = '%',
+range = c(min(0, min(dd$growth)-.01), max(dd$growth)+.01)))
+subplot(p1, p2, titleX = T, shareY = F, shareX = F) %>%
+animation_opts(500, redraw = F)
+p2
+p1
+dd <- GIND2 %>%
+mutate(d1 = fct_reorder(d1, value, function(x) mean(x, na.rm=T))) %>%
+# mutate(d1 = fct_relevel(d1, c("FF", "LSTK", "CROPS",
+#                               "COG", "IRON", "DWE",
+#                               "ISR",
+#                               "ELY", "CMN", "REC",
+#                               "LMAN", "FMAN", "HMAN",
+#                               "TRN", "CNS",
+#                               "TRD", "OFI", "OBS", "OSG")))
+filter(year > min(year))
+dd
+p1 <- dd %>%
+mutate(zeros = 0) %>%
+select(-growth) %>%
+gather(key, value, -d1, -year) %>%
+plot_ly(y=~d1, x=~value, color=~d1, frame=~year,
+type = "scatter", mode = "lines+markers",
+line = list(dash = 'dot'),
+showlegend = F) %>%
+layout(margin = list(l=60, t=40),
+yaxis = list(title = "",
+showgrid = F, showline = F, showticklabels = T),
+xaxis = list(title = "Growth value",
+side = 'top', showline = T,
+range = c(min(0, min(dd$value)-100), max(dd$value)+100)))
+p2 <- dd %>%
+arrange(d1) %>%
+plot_ly(x=~growth, y=~as.numeric(d1)-1, #Note: plotly convert factor start from 0
+frame=~year,  text=~d1,
+type = "scatter", mode = "lines+markers",
+line = list(color = DC[1]), showlegend = F) %>%
+layout(margin = list(l=60, t=40),
+yaxis = list(title = "", zeroline = F,
+# ticktext = levels(dd$d1),
+showgrid = F, showline = T, showticklabels = F),
+xaxis = list(title = "Growth rate", zeroline = F,
+showline = T, side = 'top', tickprefix = '%',
+range = c(min(0, min(dd$growth)-.01), max(dd$growth)+.01)))
+subplot(p1, p2, titleX = T, shareY = F, shareX = F) %>%
+animation_opts(500, redraw = F)
+data1 <- read_csv("BAUB-ssy simple.csv", col_types = "cdddddddddddddddddddddddddddddddddddddddd") %>%
+select(Solution, matches(".*\\-[0-9]{4}")) %>%
+separate(Solution, into = c("var","d1", "d2", "d3"), remove = F)
+data1
+GIND2 <- data1 %>%
+filter(var == "GIND2") %>%
+filter(d2 == "NSW") %>%
+select(d1, matches(".*\\-[0-9]{4}")) %>%
+gather(year, value, -d1) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+mutate(d1 = fct_rev(d1)) %>%
+arrange(year) %>%
+group_by(d1) %>%
+mutate(growth = value/lag(value)-1) %>%
+filter(year >= start_year) %>%
+ungroup()
+GIND2
+dd <- GIND2 %>%
+mutate(d1 = fct_reorder(d1, value, function(x) mean(x, na.rm=T))) %>%
+# mutate(d1 = fct_relevel(d1, c("FF", "LSTK", "CROPS",
+#                               "COG", "IRON", "DWE",
+#                               "ISR",
+#                               "ELY", "CMN", "REC",
+#                               "LMAN", "FMAN", "HMAN",
+#                               "TRN", "CNS",
+#                               "TRD", "OFI", "OBS", "OSG")))
+filter(year > min(year))
+dd
+p1 <- dd %>%
+mutate(zeros = 0) %>%
+select(-growth) %>%
+gather(key, value, -d1, -year) %>%
+plot_ly(y=~d1, x=~value, color=~d1, frame=~year,
+type = "scatter", mode = "lines+markers",
+line = list(dash = 'dot'),
+showlegend = F) %>%
+layout(margin = list(l=60, t=40),
+yaxis = list(title = "",
+showgrid = F, showline = F, showticklabels = T),
+xaxis = list(title = "Growth value",
+side = 'top', showline = T,
+range = c(min(0, min(dd$value)-100), max(dd$value)+100)))
+p2 <- dd %>%
+arrange(d1) %>%
+plot_ly(x=~growth, y=~as.numeric(d1)-1, #Note: plotly convert factor start from 0
+frame=~year,  text=~d1,
+type = "scatter", mode = "lines+markers",
+line = list(color = DC[1]), showlegend = F) %>%
+layout(margin = list(l=60, t=40),
+yaxis = list(title = "", zeroline = F,
+# ticktext = levels(dd$d1),
+showgrid = F, showline = T, showticklabels = F),
+xaxis = list(title = "Growth rate", zeroline = F,
+showline = T, side = 'top', tickprefix = '%',
+range = c(min(0, min(dd$growth)-.01), max(dd$growth)+.01)))
+subplot(p1, p2, titleX = T, shareY = F, shareX = F) %>%
+animation_opts(500, redraw = F)
+dd
+count(GIND2, year)
+count(data1, year)
+data1
+GIND2 <- data1 %>%
+filter(var == "GIND2") %>%
+filter(d2 == "NSW") %>%
+select(d1, matches(".*\\-[0-9]{4}")) %>%
+gather(year, value, -d1) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+mutate(d1 = fct_rev(d1)) %>%
+arrange(year) %>%
+group_by(d1) %>%
+mutate(growth = value/lag(value)-1) %>%
+filter(year >= start_year) %>%
+ungroup()
+GIND2
+count(GIND2, year)
+data1 <- read_csv("BAUB-ssy simple.csv", col_types = "cdddddddddddddddddddddddddddddddddddddddd") %>%
+select(Solution, matches(".*\\-[0-9]{4}")) %>%
+separate(Solution, into = c("var","d1", "d2", "d3"), remove = F)
+count(data1, year)
+glimpse(data1)
+GIND2 <- data1 %>%
+filter(var == "GIND2") %>%
+filter(d2 == "NSW") %>%
+select(d1, matches(".*\\-[0-9]{4}")) %>%
+gather(year, value, -d1) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+mutate(d1 = fct_rev(d1)) %>%
+arrange(year) %>%
+group_by(d1) %>%
+mutate(growth = value/lag(value)-1) %>%
+filter(year >= start_year) %>%
+ungroup()
+dd <- GIND2 %>%
+mutate(d1 = fct_reorder(d1, value, function(x) mean(x, na.rm=T))) %>%
+# mutate(d1 = fct_relevel(d1, c("FF", "LSTK", "CROPS",
+#                               "COG", "IRON", "DWE",
+#                               "ISR",
+#                               "ELY", "CMN", "REC",
+#                               "LMAN", "FMAN", "HMAN",
+#                               "TRN", "CNS",
+#                               "TRD", "OFI", "OBS", "OSG")))
+filter(year > min(year))
+dd
+p1 <- dd %>%
+mutate(zeros = 0) %>%
+select(-growth) %>%
+gather(key, value, -d1, -year) %>%
+plot_ly(y=~d1, x=~value, color=~d1, frame=~year,
+type = "scatter", mode = "lines+markers",
+line = list(dash = 'dot'),
+showlegend = F) %>%
+layout(margin = list(l=60, t=40),
+yaxis = list(title = "",
+showgrid = F, showline = F, showticklabels = T),
+xaxis = list(title = "Growth value",
+side = 'top', showline = T,
+range = c(min(0, min(dd$value)-100), max(dd$value)+100)))
+p2 <- dd %>%
+arrange(d1) %>%
+plot_ly(x=~growth, y=~as.numeric(d1)-1, #Note: plotly convert factor start from 0
+frame=~year,  text=~d1,
+type = "scatter", mode = "lines+markers",
+line = list(color = DC[1]), showlegend = F) %>%
+layout(margin = list(l=60, t=40),
+yaxis = list(title = "", zeroline = F,
+# ticktext = levels(dd$d1),
+showgrid = F, showline = T, showticklabels = F),
+xaxis = list(title = "Growth rate", zeroline = F,
+showline = T, side = 'top', tickprefix = '%',
+range = c(min(0, min(dd$growth)-.01), max(dd$growth)+.01)))
+subplot(p1, p2, titleX = T, shareY = F, shareX = F) %>%
+animation_opts(500, redraw = F)
+GIND2
+data1
+data1 %>%
+filter(var == "GIND2") %>%
+filter(d1 %in% c("NSW", "ROA")) %>%
+select(d1, matches(".*\\-[0-9]{4}"))
+data1 %>%
+filter(var == "GIND2") %>%
+filter(d1 %in% c("NSW", "ROA")) %>%
+select(d1, matches(".*\\-[0-9]{4}"))
+data1 %>%
+filter(var == "GIND2") %>%
+select(d1, matches(".*\\-[0-9]{4}"))
+data1 %>%
+filter(var == "GIND2") %>%
+filter(d2 %in% c("NSW", "ROA")) %>%
+select(d1, d2, matches(".*\\-[0-9]{4}")) %>%
+gather(year, qva, -d1, -d2)
+data1 %>%
+filter(var == "GIND2") %>%
+filter(d2 %in% c("NSW", "ROA")) %>%
+select(d1, d2, matches(".*\\-[0-9]{4}")) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+mutate(d2 = fct_relevel(d2, c("NSW","ROA"))) %>%
+group_by(d1, d2) %>%
+arrange(year) %>%
+mutate(growth = value/lag(value) - 1) %>%
+filter(year >= start_year) %>%
+ggplot(aes(x= year, y=growth, group=d1)) +
+geom_line(alpha=.1) +
+geom_line(aes(frame=as.character(d1)), col=DC[1]) +
+facet_wrap(~d2) +
+xlab("") +
+ggy(percent, "Growth rate") +
+ggl("none")
+data1 %>%
+filter(var == "GIND2") %>%
+filter(d2 %in% c("NSW", "ROA")) %>%
+select(d1, d2, matches(".*\\-[0-9]{4}")) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+mutate(d2 = fct_relevel(d2, c("none","NSW","ROA"))) %>%
+group_by(d1, d2) %>%
+arrange(year) %>%
+mutate(growth = value/lag(value) - 1) %>%
+filter(year >= start_year) %>%
+ggplot(aes(x= year, y=growth, group=d1)) +
+geom_line(alpha=.1) +
+geom_line(aes(frame=as.character(d1)), col=DC[1]) +
+facet_wrap(~d2) +
+xlab("") +
+ggy(percent, "Growth rate") +
+ggl("none")
+data1 %>%
+filter(var == "GIND2") %>%
+filter(d2 %in% c("NSW", "ROA")) %>%
+select(d1, d2, matches(".*\\-[0-9]{4}")) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+mutate(d2 = fct_relevel(d2, c("NSW","ROA"))) %>%
+filter(year >= start_year) %>%
+ggplot(aes(x= year, y=value, group=d1)) +
+geom_line(alpha=.1) +
+geom_line(aes(frame=as.character(d1)), col=DC[2]) +
+facet_wrap(~d2) +
+xlab("") +
+ggy(comma, "Growth value") +
+ggl("none")
+glimpse(data1)
+data1
+count(data1, var)
+data1 %>% filter(var == "EXPORTS1")
+runApp()
+data1 %>%
+filter(var == "FTE2") %>%
+filter(d1 %in% c("NSW","ROA")) %>%
+select(d1, matches(".*\\-[0-9]{4}")) %>%
+gather(year, value, -d1) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+group_by(d1) %>%
+mutate(growth = value/lag(value)-1) %>%
+filter(year >= start_year) %>%
+spread(d1, value) %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~NSW, name = "NSW",
+color = I(DC[3]), visible = T) %>%
+layout(updatemenus = list(trade_bar_chart_types),
+# legend = list(x = 0.9, y = 1),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "FTE"))
+data1 %>%
+filter(var == "FTE2") %>%
+filter(d1 %in% c("NSW","ROA")) %>%
+select(d1, matches(".*\\-[0-9]{4}")) %>%
+gather(year, value, -d1) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+group_by(d1) %>%
+mutate(growth = value/lag(value)-1) %>%
+filter(year >= start_year) %>%
+spread(d1, value)
+data1 %>%
+filter(var == "FTE2") %>%
+filter(d2 %in% c("NSW","ROA")) %>%
+select(d1, matches(".*\\-[0-9]{4}")) %>%
+gather(year, value, -d1) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+group_by(d1) %>%
+mutate(growth = value/lag(value)-1) %>%
+filter(year >= start_year) %>%
+spread(d1, value)
+data1
+data1 %>%
+filter(var == "FTE2")
+count(data1, var)
+data1 %>%
+filter(var == "EMP2") %>%
+filter(d2 %in% c("NSW","ROA")) %>%
+select(d1, matches(".*\\-[0-9]{4}")) %>%
+gather(year, value, -d1) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+group_by(d1) %>%
+mutate(growth = value/lag(value)-1) %>%
+filter(year >= start_year) %>%
+spread(d1, value)
+data1 %>%
+filter(var == "EMP2")
+data1 %>%
+filter(var == "EMP2") %>%
+filter(d1 %in% c("NSW","ROA")) %>%
+select(d1, matches(".*\\-[0-9]{4}")) %>%
+gather(year, value, -d1) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+group_by(d1) %>%
+mutate(growth = value/lag(value)-1) %>%
+filter(year >= start_year) %>%
+spread(d1, value)
+runApp()
+runApp()
+data1 %>%
+filter(var == "EXPORTS1") %>%
+select(-Solution, -var, -d3) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+filter(year >= start_year) %>%
+filter(d2 %in% c("NSW", "ROA")) %>%
+spread(d2, value) %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]),
+visible = "legendonly") %>%
+add_trace(x=~year, y=~NSW, frame = ~d1, name = "NSW",
+color = I(DC[3]), visible = T) %>%
+layout(updatemenus = list(trade_bar_chart_types),
+# legend = list(x = 0.9, y = 1),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "Exports")) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="red"))
+)
+runApp()
+data1 %>%
+filter(var == "EXPORTS1") %>%
+select(-Solution, -var, -d3) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+filter(year >= start_year) %>%
+filter(d2 %in% c("NSW", "ROA")) %>%
+spread(d2, value) %>%
+# plot_ly(type = "scatter", mode = "lines+markers") %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~NSW, frame = ~d1, name = "NSW",
+color = I(DC[3]), visible = T) %>%
+layout(updatemenus = list(trade_bar_chart_types),
+# legend = list(x = 0.9, y = 1),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "Exports")) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="red"))
+)
+runApp()
+runApp()
+pp <- data1 %>%
+filter(var == "EMP2") %>%
+filter(d1 %in% c("NSW","ROA")) %>%
+select(d1, matches(".*\\-[0-9]{4}")) %>%
+gather(year, value, -d1) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+# mutate(d1 = fct_relevel(d1, c(RegName(),StateName(),"ROA"))) %>%
+group_by(d1) %>%
+mutate(growth = value/lag(value)-1) %>%
+filter(year >= start_year) %>%
+spread(d1, value) %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~get("NSW"), name = "NSW",
+color = I(DC[3]), visible = T) %>%
+layout(updatemenus = list(trade_bar_chart_types),
+# legend = list(x = 0.9, y = 1),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "FTE"))
+pp
+pp %>%
+add_trace(x=~year, y=~ROA, name = "ROA", color = I(DC[1]),
+visible = T)
+data1 %>%
+filter(var == "EXPORTS1") %>%
+select(-Solution, -var, -d3) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+filter(year >= start_year) %>%
+filter(d2 %in% c("NSW", "ROA")) %>%
+spread(d2, value) %>%
+# plot_ly(type = "scatter", mode = "lines+markers") %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~get("NSW"), frame = ~d1, name = "NSW",
+color = I(DC[3]), visible = T) %>%
+layout(updatemenus = list(trade_bar_chart_types),
+# legend = list(x = 0.9, y = 1),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "Exports")) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="red"))
+)
+pp <- data1 %>%
+filter(var == "EXPORTS1") %>%
+select(-Solution, -var, -d3) %>%
+mutate(d1 = fct_inorder(d1)) %>%
+gather(year, value, -d1, -d2) %>%
+mutate(year = as.numeric(str_extract_all(year, "(?<=\\-)[0-9]{4}"))) %>%
+filter(year >= start_year) %>%
+filter(d2 %in% c("NSW", "ROA")) %>%
+spread(d2, value) %>%
+# plot_ly(type = "scatter", mode = "lines+markers") %>%
+plot_ly(type = "bar") %>%
+add_trace(x=~year, y=~get("NSW"), frame = ~d1, name = "NSW",
+color = I(DC[3]), visible = T) %>%
+layout(updatemenus = list(trade_bar_chart_types),
+# legend = list(x = 0.9, y = 1),
+xaxis = list(title = "", dtick = 2),
+yaxis = list(title = "Exports")) %>%
+animation_slider(
+currentvalue = list(prefix = "Commodity ", font = list(color="red"))
+)
+pp %>%
+add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]),
+visible = T)
+pp %>%
+add_trace(x=~year, y=~ROA, frame = ~d1, name = "ROA", color = I(DC[1]), visible = T)
+runApp()
+runApp()
+runApp()
+runApp()
+runApp()
+runApp()
+subplot(p1, p2, titleX = T, shareY = F, shareX = F) %>%
+animation_opts(500, redraw = F)
+GIND2
+dd
+dd <- GIND2 %>%
+mutate(d1 = fct_reorder(d1, value, function(x) mean(x, na.rm=T))) %>%
+# mutate(d1 = fct_relevel(d1, c("FF", "LSTK", "CROPS",
+#                               "COG", "IRON", "DWE",
+#                               "ISR",
+#                               "ELY", "CMN", "REC",
+#                               "LMAN", "FMAN", "HMAN",
+#                               "TRN", "CNS",
+#                               "TRD", "OFI", "OBS", "OSG")))
+filter(year > min(year))
+p1 <- dd %>%
+mutate(zeros = 0) %>%
+select(-growth) %>%
+gather(key, value, -d1, -year) %>%
+plot_ly(y=~d1, x=~value, color=~d1, frame=~year,
+type = "scatter", mode = "lines+markers",
+line = list(dash = 'dot'),
+showlegend = F) %>%
+layout(margin = list(l=60, t=40),
+yaxis = list(title = "",
+showgrid = F, showline = F, showticklabels = T),
+xaxis = list(title = "Growth value",
+side = 'top', showline = T,
+range = c(min(0, min(dd$value)-100), max(dd$value)+100)))
+p2 <- dd %>%
+arrange(d1) %>%
+plot_ly(x=~growth, y=~as.numeric(d1)-1, #Note: plotly convert factor start from 0
+frame=~year,  text=~d1,
+type = "scatter", mode = "lines+markers",
+line = list(color = DC[1]), showlegend = F) %>%
+layout(margin = list(l=60, t=40),
+yaxis = list(title = "", zeroline = F,
+# ticktext = levels(dd$d1),
+showgrid = F, showline = T, showticklabels = F),
+xaxis = list(title = "Growth rate", zeroline = F,
+showline = T, side = 'top', tickprefix = '%',
+range = c(min(0, min(dd$growth)-.01), max(dd$growth)+.01)))
+subplot(p1, p2, titleX = T, shareY = F, shareX = F) %>%
+animation_opts(500, redraw = F)
+runApp()
+runApp()
+shiny::runApp('~/Google Drive/shinyapp/CGE dashboard/TidyCGE_v0.3 backup')
+runApp()
+runApp()
+runApp()
+shiny::runApp()

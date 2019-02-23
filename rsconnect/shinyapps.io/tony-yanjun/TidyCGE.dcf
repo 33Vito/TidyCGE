@@ -1,0 +1,12 @@
+name: TidyCGE
+title: TidyCGE
+username:
+account: tony-yanjun
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 252147
+bundleId: 1406533
+url: https://tony-yanjun.shinyapps.io/TidyCGE/
+when: 1527912424.81424
+asMultiple: FALSE
+asStatic: FALSE

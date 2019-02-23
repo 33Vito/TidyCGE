@@ -1,7 +1,7 @@
 # TidyCGE
 # Exploring the CGE results in a tidy data format
 # Tony Liu
-# Date: Jan, 2018
+# Date: Mar, 2018
 
 # ui.R
 # modularised
@@ -23,6 +23,7 @@ dashboardPage(
       numericInput("Year", "Year", value = 2012), 
       textInput("RegName", "Shock Region", value = ""),
       textInput("StateName", "Shock State", value = "NSW"),
+      uiOutput("download_reg"), 
       
       menuItem("BAU", tabName = "BAU", icon = icon("database")),
       menuItem("LGA", tabName = "LGA", icon = icon("map-marker")), 
@@ -38,19 +39,19 @@ dashboardPage(
         menuSubItem("Social", icon = icon("coffee"), tabName = "helpSocial"),
         menuSubItem("Control", icon = icon("gear"), tabName = "helpControl")
       ),
-      br(),
-      withTags({
-        div(align = "center",
-            a(
-              href = "http://www.deloitteaccesseconomics.com.au/",
-              img(
-                src = 'DEL_PRI_Access_Econ_RGB-01.jpg',
-                class = 'logo',
-                height = '65',
-                width = '180'
-              )
-            ))
-      }),
+      # br(),
+      # withTags({
+      #   div(align = "center",
+      #       a(
+      #         href = "http://www.deloitteaccesseconomics.com.au/",
+      #         img(
+      #           src = 'DEL_PRI_Access_Econ_RGB-01.jpg',
+      #           class = 'logo',
+      #           height = '65',
+      #           width = '180'
+      #         )
+      #       ))
+      # }),
       br()
       
     ) # end of sidebarMenu
